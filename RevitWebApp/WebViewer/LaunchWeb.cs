@@ -22,7 +22,39 @@ namespace RevitWebApp
         internal LaunchWeb(UIApplication a, WebView2 web_view)
         {
             this.web_view = web_view;
+            // added to start the server from revit, otherwise, start it manually from terminal
+            // note to remove this if the server is going to be hosted online
+            StartHttpServer();
+
             this.LoadContent();
+        }
+
+        //definition to start the http server from revit
+        //to remove this part if the server is going to be hosted online
+        private void StartHttpServer()
+        {
+            ProcessStartInfo startInfo = new ProcessStartInfo
+            {
+                FileName = "cmd.exe",
+                Arguments = "/c http-server -p 5173",
+                WorkingDirectory = @"C:\Users\wenji\Desktop\BoblyxDPA\RevitWebApp\ui", // Update this path
+                CreateNoWindow = true,
+                UseShellExecute = false
+            };
+
+            try
+            {
+                Process process = Process.Start(startInfo);
+                if (process == null)
+                {
+                    throw new InvalidOperationException("Failed to start HTTP server.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("Failed to start HTTP server.");
+                Debug.WriteLine(ex.Message);
+            }
         }
 
         private async void LoadContent()
