@@ -17,7 +17,7 @@ namespace RevitWebApp
         private WebView2 web_view;
         public Action CloseAction { get; set; }
         private const string DEFAULT_FOLDER = "C:/Temp";
-        private const string FAKE_URL = "http://my.fakeurl/";
+        private const string FAKE_URL = "fake_url";
 
         internal LaunchWeb(UIApplication a, WebView2 web_view)
         {
@@ -36,8 +36,8 @@ namespace RevitWebApp
             ProcessStartInfo startInfo = new ProcessStartInfo
             {
                 FileName = "cmd.exe",
-                Arguments = "/c http-server -p 5173",
-                WorkingDirectory = @"C:\Users\wenji\Desktop\BoblyxDPA\RevitWebApp\ui", // Update this path
+                Arugements = "/c npm start",
+                WorkingDirectory = @"C:\Users\trust\OneDrive - Singapore University of Technology and Design\Internship\RevitAIplugin\RevitWebApp\ui", // Update this path
                 CreateNoWindow = true,
                 UseShellExecute = false
             };
