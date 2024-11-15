@@ -7,27 +7,32 @@ from datetime import datetime
 from openai import OpenAI
 from dotenv import load_dotenv
 
+# get the virtual environment directory
+venv = os.environ['VIRTUAL_ENV']
+dir = os.path.dirname(venv)
+
 # Load variables from .env file
-dir = "C:/Users/trust/OneDrive - Singapore University of Technology and Design/Internship"
 dotenv_path = os.path.join(dir , '.env')
 load_dotenv(dotenv_path)
 
 # Access your API key
 key = os.environ.get("OPENAI_API_KEY")
 
+# initialise the flask app
 app = Flask(__name__)
 CORS(app)
 
-path = os.path.join(dir , "B-score mapping for revit.xlsx")
-temp1 = os.path.join(dir , "noblanks.csv")
-temp2 = os.path.join(dir , 'add.csv')
-temp3 = os.path.join(dir , 'filtered.csv')
-out_path = os.path.join(dir , "Wall_results.csv")
+# need to add these paths to a temp folder in the environment
+path = os.path.join(dir , "files", "B-score mapping for revit.xlsx")
+temp1 = os.path.join(dir , "temp", "noblanks.csv")
+temp2 = os.path.join(dir , "temp", "add.csv")
+temp3 = os.path.join(dir , "temp" , "filtered.csv")
+out_path = os.path.join(dir , "files", "Wall_results.csv")
 
 colu = []
 
 # Function to parse user input for columns
-@app.route('/filter_columns', methods=['POST'])
+@app.route('/api/filter_columns', methods=['POST'])
 def filter_input():
     # Get the JSON data sent from the client
     data = request.get_json()
@@ -46,42 +51,89 @@ def filter_input():
     for item in column_list:
         if item not in colu:
             colu.append(item)
-    print(f"col: {colu}") # for terminal bug testing
+    # print(f"col: {colu}") # for terminal bug testing
 
     return jsonify({"data": column_list}), 200
 
 # Endpoint to receive the CSV and process it
-@app.route('/api/upload', methods=['POST'])
-def upload_file():
-    if 'file' not in request.files:
-        return jsonify({'error': 'No file provided'}), 400
+# @app.route('/api/upload', methods=['POST'])
+@app.route('/api/process_csv', methods=['POST'])
+# def upload_file():
+#     if 'file' not in request.files:
+#         return jsonify({'error': 'No existing file'}), 400
 
-    file = request.files['file']
+#     file = request.files['file']
 
-    if file.filename == '':
-        return jsonify({'error': 'No file selected'}), 400
+#     if file.filename == '':
+#         return jsonify({'error': 'No existing file'}), 400
 
-    if file and file.filename.endswith('.csv'):
+#     if file and file.filename.endswith('.csv'):
 
-        pipeline = init_ai()
+#         pipeline = init_ai()
   
-        filepath = os.path.join(dir, file.filename)
+#         filepath = os.path.join(dir, file.filename)
+
+#         cols = col_filter(filepath, temp3)
+
+#         labels = label()
+
+#         eler = Ai_gen(pipeline, cols, labels)
+
+#         add_cols(eler, temp2)
+
+#         merge_csv(temp2, temp3, out_path)
+
+#         data_final = result_csv(out_path)
+
+#         return jsonify(data_final), 200
+
+#     return jsonify({'error': 'Invalid file type, only .csv files allowed'}), 400
+def process_csv():
+    # Search for a CSV file in the directory
+    csv_directory = os.path.join(dir, 'files')
+    # print(csv_directory) # for terminal bug testing
+    
+    csv_files = [f for f in os.listdir(csv_directory) if f.endswith('.csv')]
+
+    if not csv_files:
+        return jsonify({'error': 'No CSV file found in the directory'}), 400
+
+    # Use the first CSV file found
+    csv_filename = csv_files[0]
+    # print("CSV file found:", csv_filename) # for terminal bug testing   
+
+    filepath = os.path.join(csv_directory, csv_filename)
+    # print("CSV file path:", filepath) # for terminal bug testing
+
+    try:
+        # Initialize AI pipeline
+        pipeline = init_ai()
+        # print("AI pipeline initialized") # for terminal bug testing
 
         cols = col_filter(filepath, temp3)
+        # print("Columns filtered") # for terminal bug testing
 
         labels = label()
+        # print("labelling done") # for terminal bug testing
 
         eler = Ai_gen(pipeline, cols, labels)
+        # print("AI generated") # for terminal bug testing
 
         add_cols(eler, temp2)
+        # print("Columns added") # for terminal bug testing
 
         merge_csv(temp2, temp3, out_path)
+        # print("CSV merged") # for terminal bug testing
 
         data_final = result_csv(out_path)
+        # print("CSV data ready") # for terminal bug testing  
 
         return jsonify(data_final), 200
+    
+    except Exception as e:
 
-    return jsonify({'error': 'Invalid file type, only .csv files allowed'}), 400
+        return jsonify({'error': str(e)}), 500
+
 
 def result_csv(filepath):
     with open(filepath, mode = 'r') as file:
