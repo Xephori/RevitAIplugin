@@ -24,10 +24,10 @@ CORS(app)
 
 # need to add these paths to a temp folder in the environment
 path = os.path.join(dir , "files", "B-score mapping for revit.xlsx")
-temp1 = os.path.join(dir , "temp", "noblanks.csv")
-temp2 = os.path.join(dir , "temp", "add.csv")
-temp3 = os.path.join(dir , "temp" , "filtered.csv")
-out_path = os.path.join(dir , "files", "Wall_results.csv")
+temp1 = os.path.join(dir , "temp", "intermediates", "noblanks.csv")
+temp2 = os.path.join(dir , "temp", "intermediates", "add.csv")
+temp3 = os.path.join(dir , "temp", "intermediates", "filtered.csv")
+out_path = os.path.join(dir , "files", "results", "Wall_results.csv")
 
 colu = []
 
@@ -58,39 +58,10 @@ def filter_input():
 # Endpoint to receive the CSV and process it
 # @app.route('/api/upload', methods=['POST'])
 @app.route('/api/process_csv', methods=['POST'])
-# def upload_file():
-#     if 'file' not in request.files:
-#         return jsonify({'error': 'No existing file'}), 400
-
-#     file = request.files['file']
-
-#     if file.filename == '':
-#         return jsonify({'error': 'No existing file'}), 400
-
-#     if file and file.filename.endswith('.csv'):
-
-#         pipeline = init_ai()
-  
-#         filepath = os.path.join(dir, file.filename)
-
-#         cols = col_filter(filepath, temp3)
-
-#         labels = label()
-
-#         eler = Ai_gen(pipeline, cols, labels)
-
-#         add_cols(eler, temp2)
-
-#         merge_csv(temp2, temp3, out_path)
-
-#         data_final = result_csv(out_path)
-
-#         return jsonify(data_final), 200
-
-#     return jsonify({'error': 'Invalid file type, only .csv files allowed'}), 400
 def process_csv():
     # Search for a CSV file in the directory
-    csv_directory = os.path.join(dir, 'files')
+    # csv_directory = os.path.join(dir, 'files')
+    csv_directory = os.path.join(dir, 'temp')
     # print(csv_directory) # for terminal bug testing
     
     csv_files = [f for f in os.listdir(csv_directory) if f.endswith('.csv')]
