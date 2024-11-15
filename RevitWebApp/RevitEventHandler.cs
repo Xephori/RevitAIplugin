@@ -4,6 +4,7 @@ using Autodesk.Revit.UI;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.DB.Architecture;
 using System;
+using Newtonsoft.Json;
 
 /// <summary>
 /// For executing Revit Routines when called from Web UI
@@ -17,7 +18,8 @@ namespace RevitWebApp
         {
             Invalid = -1,
             Test,
-            GetVersion
+            GetVersion,
+            GetWallData, 
         }
 
         private RevitActionsEnum _currentRevitActions;
@@ -43,12 +45,47 @@ namespace RevitWebApp
                     Debug.WriteLine("Getting version...");
                     var ver_num = app.Application.VersionNumber;
                     webWindow.SendPayload("GetVersion", "{\"version\":"+ver_num+"}");
-               
+                    break;
+                case RevitActionsEnum.GetWallData: 
+                    Debug.WriteLine("Getting wall data...");
+                    var wallData = GetWallData(app);
+                    webWindow.SendPayload("GetWallData", wallData);
                     break;
                 default:
                     Debug.WriteLine("Unhandled Action.");
                     break;
             }
+        }
+
+        private string GetWallData(UIApplication app)
+        {
+            var doc = app.ActiveUIDocument.Document;
+            var collector = new FilteredElementCollector(doc);
+            var walls = collector.OfClass(typeof(Wall)).ToElements();
+
+            var wallDataList = new List<Dictionary<string, string>>();
+
+            foreach (Wall wall in walls)
+            {
+                var wallType = doc.GetElement(wall.GetTypeId()) as ElementType;
+                var wallData = new Dictionary<string, string>
+                {
+                    { "Id", wall.Id.ToString() },
+                    { "Name", wall.Name }
+                };
+
+                foreach (Parameter param in wallType.Parameters)
+                {
+                    if (param.HasValue)
+                    {
+                        wallData[param.Definition.Name] = param.AsValueString();
+                    }
+                }
+
+                wallDataList.Add(wallData);
+            }
+
+            return JsonConvert.SerializeObject(wallDataList);
         }
 
         public ExternalEventRequest Raise(RevitActionsEnum revitActionsName) {

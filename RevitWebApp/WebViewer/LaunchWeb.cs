@@ -37,7 +37,8 @@ namespace RevitWebApp
             {
                 FileName = "cmd.exe",
                 Arugements = "/c npm start",
-                WorkingDirectory = @"C:\Users\trust\OneDrive - Singapore University of Technology and Design\Internship\RevitAIplugin\RevitWebApp\ui", // Update this path
+                // Arguments = "/c http-server -p 5173",
+                WorkingDirectory = @"C:\Users\trust\OneDrive - Singapore University of Technology and Design\Internship\RevitAIplugin\flask\src", // Update this path
                 CreateNoWindow = true,
                 UseShellExecute = false
             };

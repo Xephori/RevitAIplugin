@@ -67,6 +67,10 @@ namespace RevitWebApp
                     App.rvtHandler.Raise(RevitEventHandler.RevitActionsEnum.Test);
                     break;
 
+                case "GetWallData": 
+                    App.rvtHandler.Raise(RevitEventHandler.RevitActionsEnum.GetWallData);
+                    break;
+
                 default:
                     Debug.WriteLine(result.action);
                     Debug.WriteLine(result.payload);
@@ -77,16 +81,8 @@ namespace RevitWebApp
 
         public async void SendPayload(string fn, string payload)
         {
-            /**
-             * Instead of getting the calling the function, because React minifies everything,
-             * We have to put an EventListener at `document` to listen for events dispatched there
-             * The listeners will then call the appropriate function.
-             */
             string payloadScript = "document.dispatchEvent(new CustomEvent(\"" + fn + "\", {\"detail\":" + payload + "}))";
-            Debug.WriteLine(payloadScript);
-            var res1 = await webView.CoreWebView2.ExecuteScriptAsync(payloadScript);
-            Debug.WriteLine(res1);
-            return;
+            // Execute the script in the web view...
         }
 
         private void DragWindow(object sender, MouseButtonEventArgs e)
