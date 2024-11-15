@@ -36,9 +36,9 @@ namespace RevitWebApp
             ProcessStartInfo startInfo = new ProcessStartInfo
             {
                 FileName = "cmd.exe",
-                Arugements = "/c npm start",
+                Arguments = "/c npm start",
                 // Arguments = "/c http-server -p 5173",
-                WorkingDirectory = @"C:\Users\trust\OneDrive - Singapore University of Technology and Design\Internship\RevitAIplugin\flask\src", // Update this path
+                WorkingDirectory = @"C:\Users\trust\OneDrive - Singapore University of Technology and Design\Internship\RevitAIplugin\localhost", // Update this path
                 CreateNoWindow = true,
                 UseShellExecute = false
             };
