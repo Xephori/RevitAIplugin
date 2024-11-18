@@ -36,10 +36,9 @@ namespace RevitWebApp
             ProcessStartInfo startInfo = new ProcessStartInfo
             {
                 FileName = "cmd.exe",
-                // Arguments = "/c npm start",
-                Arguments = "/c streamlit run streamlit_app.py",
+                Arguments = "/c npm start",
                 // Arguments = "/c http-server -p 5173",
-                WorkingDirectory = @"C:\Users\trust\OneDrive - Singapore University of Technology and Design\Internship\RevitAIplugin\python\streamlit\", // Update this path
+                WorkingDirectory = @"C:\Users\trust\OneDrive - Singapore University of Technology and Design\Internship\RevitAIplugin\localhost", // Update this path
                 CreateNoWindow = true,
                 UseShellExecute = false
             };
@@ -121,7 +120,7 @@ namespace RevitWebApp
             // FOR embedded web files: .html needed because for some reason can't read from root url.
             // web_view.CoreWebView2.Navigate(FAKE_URL+"index.html");
             // For development or connection to a remote server, just navigate to the website
-            web_view.CoreWebView2.Navigate("http://localhost:8501");
+            web_view.CoreWebView2.Navigate("http://localhost:5173");
         }
     }
 
