@@ -29,13 +29,6 @@ def init_ai():
     return client
 
 def process_csv(cols):
-    csv_directory = os.path.join(dir, 'temp')
-    csv_files = [f for f in os.listdir(csv_directory) if f.endswith('.csv')]
-
-    # Use the first CSV file found
-    csv_filename = csv_files[0]
-    filepath = os.path.join(csv_directory, csv_filename)
-
     pipeline = init_ai()
     # print("AI pipeline initialized") # for terminal bug testing
 
