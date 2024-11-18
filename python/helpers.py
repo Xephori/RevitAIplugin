@@ -20,7 +20,7 @@ path = os.path.join(dir , "files", "B-score mapping for revit.xlsx")
 temp1 = os.path.join(dir , "temp", "intermediates", "noblanks.csv")
 temp2 = os.path.join(dir , "temp", "intermediates", "add.csv")
 temp3 = os.path.join(dir , "temp", "intermediates", "filtered.csv")
-out_path = os.path.join(dir , "temp", "results", "Wall_results.csv")
+out_path = os.path.join(dir , "files", "results", "Wall_results.csv")
 
 colu = []
 
