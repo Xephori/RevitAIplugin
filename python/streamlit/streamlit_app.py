@@ -6,6 +6,7 @@ import io
 import xlsxwriter
 import csv
 import re
+import requests
 
 # directory reach
 current = os.path.dirname(os.path.realpath(__file__))
@@ -120,78 +121,38 @@ if st.button("Predict Bscore"):
         st.warning("Please filter columns first. If you do not have any filters in mind just click the 'Apply Filter' button eitherway.")
     
 
-# st.header("1. Filter Columns")
+st.header("Revit Information Retrieval")
 
-# # Input for column names
-# columns_input = st.text_input(
-#     "Enter columns to filter (comma-separated, e.g., name, age, city):",
-#     ""
-# )
+def get_revit_version():
+    url = "http://localhost:5000/api/Revit/GetVersion"
+    try:
+        response = requests.get(url)
+        response.raise_for_status()
+        return response.json().get("version", "No version returned")
+    except requests.exceptions.RequestException as e:
+        return f"Error: {e}"
 
-# # Button to apply column filter
-# if st.button("Apply Filter"):
-#     if columns_input:
-#         # Split and strip column names
-#         columns = [col.strip() for col in columns_input.split(",")]
-#         st.session_state['filtered_columns'] = columns
-#         st.success(f"Columns to filter: {columns}")
-#     else:
-#         st.session_state['filtered_columns'] = ["buildability", "bdas", "bscore"]
-    
-# st.header("2. Upload and Process CSV")
+def get_wall_element_types():
+    url = "http://localhost:5000/api/Revit/GetWallElementTypes"
+    try:
+        response = requests.get(url)
+        response.raise_for_status()
+        wall_types = response.json().get("wallTypes", [])
+        return wall_types
+    except requests.exceptions.RequestException as e:
+        return f"Error: {e}"
 
-# # File uploader for CSV
-# uploaded_file = os.path.join(parent, "temp", "Wall_uh.csv")
+# Button to get Revit version
+if st.button("Get Revit Version"):
+    version = get_revit_version()
+    st.success(f"Revit Version: {version}")
 
-# if uploaded_file:
-#     try:
-#         # Save uploaded file to a temporary location
-#         df = pd.read_csv(uploaded_file)
-#         st.session_state['original_df'] = df
-#         st.write("### Original DataFrame", df)
-
-#         # Apply column filter if columns are selected
-#         if 'filtered_columns' in st.session_state:
-#             filtered_columns = st.session_state['filtered_columns']
-#             filtered_df = col_filter(df, filtered_columns)
-#             st.session_state['filtered_df'] = filtered_df
-#             st.write("### Filtered DataFrame", filtered_df)
-#         else:
-#             st.info("No columns filtered. Displaying original DataFrame.")
-#     except Exception as e:
-#         st.error(f"Error processing CSV file: {e}")
-    
-# st.header("3. Predict and Extract Data")
-
-# if 'filtered_df' in st.session_state:
-#     if st.button("Run Prediction"):
-#         try:
-#             # Perform AI predictions or data extraction
-#             processed_df = label(st.session_state['filtered_df'])
-#             st.session_state['processed_df'] = processed_df
-#             st.write("### Processed DataFrame", processed_df)
-#             st.success("Data processing complete.")
-#         except Exception as e:
-#             st.error(f"Error during data processing: {e}")
-# else:
-#     st.warning("Please upload and filter CSV columns first in the 'Process CSV' section.")
-    
-# st.header("4. Test Component")
-
-# test_input = st.text_input("Enter some text for testing:", "")
-# if st.button("Run Test"):
-#     st.write(f"You entered: {test_input}")
-
-# # Display Processed Data (Optional)
-# if 'processed_df' in st.session_state:
-#     st.header("5. View Processed Data")
-#     st.dataframe(st.session_state['processed_df'])
-
-#     # Download Processed Data as CSV
-#     csv = st.session_state['processed_df'].to_csv(index=False)
-#     st.download_button(
-#         label="Download Processed CSV",
-#         data=csv,
-#         file_name='processed_data.csv',
-#         mime='text/csv',
-#     )
+# Button to get Wall Element Types
+if st.button("Get Wall Element Types"):
+    wall_types = get_wall_element_types()
+    if isinstance(wall_types, list):
+        st.write("### Wall Element Types:")
+        for wt in wall_types:
+            st.write(f"- {wt}")
+    else:
+        st.error(wall_types)
