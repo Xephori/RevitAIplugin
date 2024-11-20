@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35219.272
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RevitDataExtractor", "RevitDataExtractor.csproj", "{3638CC71-4A42-4C35-81A7-38135F725E6F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3638CC71-4A42-4C35-81A7-38135F725E6F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3638CC71-4A42-4C35-81A7-38135F725E6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3638CC71-4A42-4C35-81A7-38135F725E6F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3638CC71-4A42-4C35-81A7-38135F725E6F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3C055F53-2484-4691-813A-D39D9F64227E}
+	EndGlobalSection
+EndGlobal

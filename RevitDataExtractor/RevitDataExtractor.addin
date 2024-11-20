@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<RevitAddIns>
+	<AddIn Type="Command">
+		<Name>Wall Data Exporter</Name>
+		<Assembly>C:/Users/trust/OneDrive - Singapore University of Technology and Design/Internship/RevitAIplugin/RevitDataExtractor/bin/Debug/RevitDataExtractor.dll</Assembly>
+		<AddInId>9152322B-6369-4E03-B98B-0675262D477C</AddInId>
+		<FullClassName>RevitDataExtractor.WallDataExporter</FullClassName>
+		<VendorId>YourCompany</VendorId>
+		<VendorDescription>Plugin to Export Wall Data</VendorDescription>
+	</AddIn>
+</RevitAddIns>
