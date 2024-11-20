@@ -108,9 +108,9 @@
     <Compile Include="WebViewer\WebCommand.cs" />
     <Compile Include="WebViewer\WebWindow.xaml.cs">
       <DependentUpon>WebWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="WebViewer\StartupForm.cs" />
     <Compile Include="WebViewer\StartupForm.Designer.cs" />
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Content Include="RevitWebApp.addin" />
