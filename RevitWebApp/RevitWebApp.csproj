@@ -107,6 +107,8 @@
     <Compile Include="WebViewer\ManagedStream.cs" />
     <Compile Include="WebViewer\WebCommand.cs" />
     <Compile Include="WebViewer\WebWindow.xaml.cs">
+    <Compile Include="StartupForm.cs" />
+    <Compile Include="StartupForm.Designer.cs" />
       <DependentUpon>WebWindow.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
