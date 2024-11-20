@@ -8,7 +8,7 @@ using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 #endregion
 
-namespace RevitWebApp
+namespace RevitDataExtractor
 {
     [Transaction(TransactionMode.Manual)]
     [Regeneration(RegenerationOption.Manual)]
@@ -19,14 +19,14 @@ namespace RevitWebApp
         public Result OnStartup(UIControlledApplication a)
         {
             rvtHandler = new RevitEventHandler();
-            a.CreateRibbonTab("RevitWebApp");
-            RibbonPanel ribbon = a.CreateRibbonPanel("RevitWebApp", "Open");
+            a.CreateRibbonTab("RevitDataExtractor");
+            RibbonPanel ribbon = a.CreateRibbonPanel("RevitDataExtractor", "Open");
 
             string thisAssembly = Assembly.GetExecutingAssembly().Location;
             //Stream imgStream = Assembly.GetExecutingAssembly().GetManifestResourceStream("fire_rvt.images.Logo.png");
             //Image iconImg = Image.FromStream(imgStream);
             //showPane.LargeImage = Utilities.ToImageSource(iconImg, ImageFormat.Png);
-            PushButtonData showPane = new PushButtonData("Start App", "Start App", thisAssembly, "RevitWebApp.WebCommand");
+            PushButtonData showPane = new PushButtonData("Start App", "Start App", thisAssembly, "RevitDataExtractor.WebCommand");
             
             RibbonItem show = ribbon.AddItem(showPane);
             return Result.Succeeded;

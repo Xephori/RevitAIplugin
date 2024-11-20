@@ -8,4 +8,12 @@
 		<VendorId>YourCompany</VendorId>
 		<VendorDescription>Plugin to Export Wall Data</VendorDescription>
 	</AddIn>
+	<AddIn Type="Application">
+    <Name>Application RevitDataExtractor</Name>
+    <Assembly>C:/Users/trust/OneDrive - Singapore University of Technology and Design/Internship/RevitAIplugin/RevitDataExtractor/bin/Debug/RevitDataExtractor.dll</Assembly>
+    <FullClassName>RevitDataExtractor.App</FullClassName>
+    <ClientId>003331fb-fe84-49f7-a081-ef5e34ac1109</ClientId>
+    <VendorId>boblee</VendorId>
+    <VendorDescription>Bob Lee, github.com/boblyx</VendorDescription>
+  </AddIn>
 </RevitAddIns>
