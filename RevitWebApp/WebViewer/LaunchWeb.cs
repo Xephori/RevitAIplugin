@@ -60,67 +60,21 @@ namespace RevitWebApp
 
         private async void LoadContent()
         {
-            CoreWebView2Environment env = await CoreWebView2Environment.CreateAsync(userDataFolder: DEFAULT_FOLDER);
-            await web_view.EnsureCoreWebView2Async(env);
-
-            web_view.CoreWebView2.AddWebResourceRequestedFilter(FAKE_URL + "*",
-                CoreWebView2WebResourceContext.All
-                );
-            web_view.CoreWebView2.WebResourceRequested += delegate (object sender,
-                CoreWebView2WebResourceRequestedEventArgs args)
+            var startupForm = new StartupForm();
+            if (startupForm.ShowDialog() == DialogResult.OK)
             {
-                string assets_file_path = Utilities.AssemblyDirectory
-               + "/ui/" + args.Request.Uri.Substring((FAKE_URL + "*").Length - 1);
-
-                Debug.WriteLine(Utilities.AssemblyDirectory);
-                Debug.WriteLine(assets_file_path);
-                Debug.WriteLine(args.Request.Uri);
-
-                try
+                if (startupForm.UseLocalhost)
                 {
-                    FileStream fs = File.OpenRead(assets_file_path);
-                    ManagedStream ms = new ManagedStream(fs);
-                    string headers = "";
-                    if (assets_file_path.EndsWith(".html"))
-                    {
-                        headers = "Content-Type: text/html";
-                    }
-                    else if (assets_file_path.EndsWith(".jpg"))
-                    {
-                        headers = "Content-Type: image/jpeg";
-                    }
-                    else if (assets_file_path.EndsWith(".png"))
-                    {
-                        headers = "Content-Type: image/png";
-                    }
-                    else if (assets_file_path.EndsWith(".css"))
-                    {
-                        headers = "Content-Type: text/css";
-                    }
-                    else if (assets_file_path.EndsWith(".js"))
-                    {
-                        headers = "Content-Type: application/javascript";
-                    }
-                    else if (assets_file_path.EndsWith(".json")
-                            || assets_file_path.EndsWith(".map"))
-                    {
-                        headers = "Content-Type: application/json";
-                    }
-                    args.Response = web_view.CoreWebView2.Environment.CreateWebResourceResponse(
-                                                            ms, 200, "OK", headers);
+                    StartHttpServer();
+                    await webView2.EnsureCoreWebView2Async(null);
+                    webView2.Source = new Uri("http://localhost:5173");
                 }
-                catch (Exception ex)
+                else
                 {
-                    Debug.WriteLine("Failed to get.");
-                    Debug.WriteLine(ex.Message);
-                    args.Response = web_view.CoreWebView2.Environment.CreateWebResourceResponse(
-                                                        null, 404, "Not found", "");
+                    await webView2.EnsureCoreWebView2Async(null);
+                    webView2.Source = new Uri("https://placeholder-url.com");
                 }
-            };
-            // FOR embedded web files: .html needed because for some reason can't read from root url.
-            // web_view.CoreWebView2.Navigate(FAKE_URL+"index.html");
-            // For development or connection to a remote server, just navigate to the website
-            web_view.CoreWebView2.Navigate("http://localhost:5173");
+            }
         }
     }
 
