@@ -27,12 +27,12 @@ path = os.path.join(dir , "files", "B-score mapping for revit.xlsx")
 temp1 = os.path.join(dir , "temp", "intermediates", "noblanks.csv")
 temp2 = os.path.join(dir , "temp", "intermediates", "add.csv")
 temp3 = os.path.join(dir , "temp", "intermediates", "filtered.csv")
-out_path = os.path.join(dir , "files", "results", "Wall_results.csv")
+out_path = os.path.join(dir , "temp", "results", "Wall_results.csv")
 
 colu = []
 
 # Function to parse user input for columns
-@app.route('/api/filter_columns', methods=['POST'])
+@app.route('/filter_columns', methods=['POST'])
 def filter_input():
     # Get the JSON data sent from the client
     data = request.get_json()
@@ -57,7 +57,7 @@ def filter_input():
 
 # Endpoint to receive the CSV and process it
 # @app.route('/api/upload', methods=['POST'])
-@app.route('/api/process_csv', methods=['POST'])
+@app.route('/process_csv', methods=['POST'])
 def process_csv():
     # Search for a CSV file in the directory
     # csv_directory = os.path.join(dir, 'files')
