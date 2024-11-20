@@ -1,25 +1,5 @@
 // Test.js
 import React, { useEffect } from 'react';
-
-// ACTION 1: Send and get a test message
-function sendTestMsg(){
-    console.log("Sending test message!"); 
-    const wv2msg = {"action": "Test", "payload": {"msg": "hello world"}};
-    try{
-      const w = window;
-      w.chrome?.webview?.postMessage(wv2msg);
-    }catch(err){
-      console.error(err);
-    }
-  }
-  
-  function showTestReply(e){
-    console.log(e);
-    const msg = e.detail.msg;
-    const answer = document.querySelector("#test-res");
-    answer.value = msg
-  }
-  // END ACTION 1
   
   function getRevitVersion() {
     console.log("Getting Revit version!");
@@ -59,7 +39,6 @@ function sendTestMsg(){
   
   function initRevitListeners() {
     document.addEventListener("GetVersion", showRevitVersion);
-    document.addEventListener("Test", showTestReply);
     document.addEventListener("GetWallData", showWallData);
   }
   
@@ -70,11 +49,8 @@ function sendTestMsg(){
   
     return (
       <div>
-        <button onClick={sendTestMsg}>Send Test Message</button>
-        <textarea id="ver-res"></textarea>
-        <br />
         <button onClick={getRevitVersion}>Check Revit Version</button>
-        <textarea id="wall-data-res"></textarea>
+        <textarea id="ver-res" type="text"></textarea>
         <br />
         <button onClick={getWallData}>Get Wall Data</button>
       </div>

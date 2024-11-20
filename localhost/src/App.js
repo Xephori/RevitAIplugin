@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import ColFilter from './ColFilter';
 // import FileUpload from './FileUpload';
-// import Test from './Test';
+import Test from './Test';
 import Extraction from './Extraction';
 import Predict from './Predict';
 
@@ -24,12 +24,6 @@ function App() {
         onStartProcess={handleStartProcess}
         onFinishProcess={handleFinishProcess}
       />
-      {/* <br />
-      <FileUpload
-        disabled={isProcessing}
-        onStartProcess={handleStartProcess}
-        onFinishProcess={handleFinishProcess}
-      /> */}
       <br />
       <Extraction 
         disabled={isProcessing}
@@ -42,7 +36,7 @@ function App() {
         onStartProcess={handleStartProcess}
         onFinishProcess={handleFinishProcess}
       />
-      {/* <Test /> */}
+      <Test />
       {isProcessing && <div id="loading-icon">Loading...</div>}
     </div>
   );
