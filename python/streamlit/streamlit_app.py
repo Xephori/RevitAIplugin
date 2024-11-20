@@ -6,6 +6,7 @@ import io
 import xlsxwriter
 import csv
 import re
+from multiprocessing.connection import Client
 import requests
 
 # directory reach
@@ -123,24 +124,33 @@ if st.button("Predict Bscore"):
 
 st.header("Revit Information Retrieval")
 
-def get_revit_version():
-    url = "http://localhost:5000/api/Revit/GetVersion"
-    try:
-        response = requests.get(url)
-        response.raise_for_status()
-        return response.json().get("version", "No version returned")
-    except requests.exceptions.RequestException as e:
-        return f"Error: {e}"
+# Base URL of the Revit HTTP server
+BASE_URL = "http://127.0.0.1:8080"
 
-def get_wall_element_types():
-    url = "http://localhost:5000/api/Revit/GetWallElementTypes"
+data = os.path.join(parent, "temp", "Wall_data.csv")
+
+# Function to call the "Get Revit Version" API
+def get_revit_version():
     try:
-        response = requests.get(url)
-        response.raise_for_status()
-        wall_types = response.json().get("wallTypes", [])
-        return wall_types
+        response = requests.get(f"{BASE_URL}/get-revit-version")
+        if response.status_code == 200:
+            return response.text
+        else:
+            return f"Error: {response.status_code} - {response.text}"
     except requests.exceptions.RequestException as e:
-        return f"Error: {e}"
+        return f"Error connecting to Revit API: {e}"
+
+# Function to call the "Export Wall Data" API
+def export_wall_data():
+    try:
+        params = {"filepath": data}
+        response = requests.get(f"{BASE_URL}/export-wall-data", params=params)
+        if response.status_code == 200:
+            return response.text
+        else:
+            return f"Error: {response.status_code} - {response.text}"
+    except requests.exceptions.RequestException as e:
+        return f"Error connecting to Revit API: {e}"
 
 # Button to get Revit version
 if st.button("Get Revit Version"):
@@ -149,7 +159,7 @@ if st.button("Get Revit Version"):
 
 # Button to get Wall Element Types
 if st.button("Get Wall Element Types"):
-    wall_types = get_wall_element_types()
+    wall_types = export_wall_data()
     if isinstance(wall_types, list):
         st.write("### Wall Element Types:")
         for wt in wall_types:
