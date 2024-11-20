@@ -108,8 +108,8 @@
     <Compile Include="WebViewer\WebCommand.cs" />
     <Compile Include="WebViewer\WebWindow.xaml.cs">
       <DependentUpon>WebWindow.xaml</DependentUpon>
-    <Compile Include="StartupForm.cs" />
-    <Compile Include="StartupForm.Designer.cs" />
+    <Compile Include="WebViewer\StartupForm.cs" />
+    <Compile Include="WebViewer\StartupForm.Designer.cs" />
     </Compile>
   </ItemGroup>
   <ItemGroup>
