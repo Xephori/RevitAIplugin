@@ -93,6 +93,9 @@ if st.button("Apply Filter"):
         writer.writerows(selected_cols)  # Write each filtered row
     
     st.session_state['filtered_columns'] = selected_cols
+    
+    st.success("Columns filtered successfully!")
+    print("Columns filtered successfully!")
 
 st.header("Bscore prediction")
 if st.button("Predict Bscore"):
@@ -105,6 +108,7 @@ if st.button("Predict Bscore"):
         
         # Display the DataFrame in Streamlit
         st.dataframe(df)
+        print("Bscore prediction is complete!")
         
         # Convert the DataFrame to an Excel file in memory
         towrite = io.BytesIO()
@@ -129,10 +133,15 @@ BASE_URL = "http://127.0.0.1:8080"
 
 data = os.path.join(parent, "temp", "Wall_data.csv")
 
+headers = {
+    "Content-Type": "application/json",  # Not always required for GET, but some servers check this
+    "Host": "localhost",
+}
+
 # Function to call the "Get Revit Version" API
 def get_revit_version():
     try:
-        response = requests.get(f"{BASE_URL}/get-revit-version")
+        response = requests.get(f"{BASE_URL}/get-revit-version", headers=headers)
         if response.status_code == 200:
             return response.text
         else:
@@ -144,7 +153,7 @@ def get_revit_version():
 def export_wall_data():
     try:
         params = {"filepath": data}
-        response = requests.get(f"{BASE_URL}/export-wall-data", params=params)
+        response = requests.get(f"{BASE_URL}/export-wall-data", headers=headers, params=params)
         if response.status_code == 200:
             return response.text
         else:
