@@ -74,7 +74,6 @@
     <Compile Include="LaunchWeb.cs" />
     <Compile Include="app.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
   <ItemGroup>
     <None Include="app.manifest" />
   </ItemGroup>
