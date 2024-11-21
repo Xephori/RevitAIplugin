@@ -64,11 +64,8 @@
     <Compile Include="LaunchWeb.cs" />
     <Compile Include="app.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Page Include="WebWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Compile Include="WebWindow.xaml.cs">
+    <Compile Include="WebViewer\WebCommand.cs" />
+    <Compile Include="WebViewer\WebWindow.xaml.cs">
       <DependentUpon>WebWindow.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
