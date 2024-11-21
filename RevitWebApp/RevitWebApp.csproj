@@ -94,6 +94,7 @@
     <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net47\System.ValueTuple.dll</HintPath>
     </Reference>
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xaml" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
@@ -109,7 +110,9 @@
     <Compile Include="WebViewer\WebWindow.xaml.cs">
       <DependentUpon>WebWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="WebViewer\StartupForm.cs" />
+    <Compile Include="WebViewer\StartupForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="WebViewer\StartupForm.Designer.cs" />
   </ItemGroup>
   <ItemGroup>

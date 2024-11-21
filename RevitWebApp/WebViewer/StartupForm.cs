@@ -2,6 +2,7 @@ using System;
 using System.Windows.Forms;
 
 namespace RevitWebApp
+{
     public partial class StartupForm : Form
     {
         public bool UseLocalhost { get; private set; }
@@ -18,3 +19,4 @@ namespace RevitWebApp
             this.Close();
         }
     }
+}
