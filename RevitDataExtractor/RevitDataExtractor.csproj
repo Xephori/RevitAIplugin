@@ -60,8 +60,10 @@
     </Compile>
     <Compile Include="WallDataExporter.cs" />
     <Compile Include="WebCommand.cs" />
-  </ItemGroup>
-  <ItemGroup>
+    <Compile Include="ManagedStream.cs" />
+    <Compile Include="LaunchWeb.cs" />
+    <Compile Include="app.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
     <Page Include="WebWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -70,10 +72,6 @@
       <DependentUpon>WebWindow.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
-    <Compile Include="ManagedStream.cs" />
-    <Compile Include="LaunchWeb.cs" />
-    <Compile Include="app.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
   <ItemGroup>
     <None Include="app.manifest" />
   </ItemGroup>
