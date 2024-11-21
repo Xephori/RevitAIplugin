@@ -59,6 +59,12 @@
       <DependentUpon>UserForm.cs</DependentUpon>
     </Compile>
     <Compile Include="WallDataExporter.cs" />
+    <Compile Include="WebCommand.cs" />
+    <Compile Include="WebWindow.xaml.cs" />
+    <Compile Include="WebWindow.xaml" />
+    <Compile Include="ManagedStream.cs" />
+    <Compile Include="LaunchWeb.cs" />
+    <Compile Include="app.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
