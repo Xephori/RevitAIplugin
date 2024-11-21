@@ -60,15 +60,16 @@
     </Compile>
     <Compile Include="WallDataExporter.cs" />
     <Compile Include="WebCommand.cs" />
-    <ItemGroup>
-      <Page Include="WebWindow.xaml">
-        <Generator>MSBuild:Compile</Generator>
-        <SubType>Designer</SubType>
-      </Page>
-      <Compile Include="WebWindow.xaml.cs">
-        <DependentUpon>WebWindow.xaml</DependentUpon>
-      </Compile>
-    </ItemGroup>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="WebWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Compile Include="WebWindow.xaml.cs">
+      <DependentUpon>WebWindow.xaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
     <Compile Include="ManagedStream.cs" />
     <Compile Include="LaunchWeb.cs" />
     <Compile Include="app.cs" />
