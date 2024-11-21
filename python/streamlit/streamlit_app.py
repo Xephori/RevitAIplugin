@@ -104,7 +104,7 @@ if st.button("Predict Bscore"):
         st.write("Bscore prediction is in progress...")
         process_csv(cols)
         st.write("Bscore prediction is complete!")
-        df = pd.read_csv(os.path.join(parent, "files", "results", "Wall_results.csv"))
+        df = pd.read_csv(os.path.join(parent, "temp", "results", "Wall_results.csv"))
         
         # Display the DataFrame in Streamlit
         st.dataframe(df)
