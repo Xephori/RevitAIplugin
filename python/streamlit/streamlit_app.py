@@ -3,7 +3,7 @@ import pandas as pd
 import os
 import sys
 import io
-import xlsxwriter
+# import xlsxwriter
 import csv
 import re
 from multiprocessing.connection import Client
@@ -110,12 +110,12 @@ if st.button("Predict Bscore"):
         st.dataframe(df)
         print("Bscore prediction is complete!")
         
-        # Convert the DataFrame to an Excel file in memory
+        # Convert the DataFrame to an Csv file in memory
         towrite = io.BytesIO()
-        df.to_excel(towrite, index=False, engine='xlsxwriter')
+        df.to_excel(towrite, index=False)
         towrite.seek(0)  # Reset the pointer to the beginning of the stream
         
-        # Provide a download button for the Excel file
+        # Provide a download button for the Csv file
         st.download_button(
             label="Download Results as Excel",
             data=towrite,
