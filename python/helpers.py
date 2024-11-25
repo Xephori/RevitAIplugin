@@ -18,6 +18,7 @@ import csv
 # key = os.environ.get("OPENAI_API_KEY")
 key = os.environ["OPENAI_API_KEY"] == st.secrets["OPENAI_API_KEY"]
 
+dir = os.path.dirname(os.path.realpath(__file__))
 path = os.path.join(dir , "files", "B-score mapping for revit.xlsx")
 temp1 = os.path.join(dir , "temp", "intermediates", "noblanks.csv")
 temp2 = os.path.join(dir , "temp", "intermediates", "add.csv")
