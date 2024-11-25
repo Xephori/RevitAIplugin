@@ -1,7 +1,6 @@
 import streamlit as st
 import pandas as pd
 import os
-# import sys
 import io
 import xlsxwriter
 import csv
@@ -11,10 +10,6 @@ import requests
 # directory reach
 current = os.path.dirname(os.path.realpath(__file__))
 
-# parent = os.path.dirname(current)
-
-# sys.path.append(parent)
-
 from helpers import process_csv
 
 # Streamlit App Title
@@ -22,10 +17,60 @@ st.title("AI Bscore Label Prediction App")
 
 st.header("Functions:")
 st.write("""
-    - **Filter Columns**: Fill in key words of columns that you wish to filter out (it does not have to be the entire full name of the column).
     - **Revit Information Retrieval**: Retrieve all wall parameters from the Revit project.
+    - **Filter Columns**: Fill in key words of columns that you wish to filter out (it does not have to be the entire full name of the column).
     - **Bscore Prediction**: Process the file schedule data from Revit through AI.
 """)
+
+st.header("Revit Information Retrieval")
+
+# Base URL of the Revit HTTP server
+BASE_URL = "http://127.0.0.1:8080"
+
+data = os.path.join(current, "temp", "Wall_data.csv")
+
+headers = {
+    "Content-Type": "application/json",  # Not always required for GET, but some servers check this
+    "Host": "localhost",
+}
+
+# Function to call the "Get Revit Version" API
+def get_revit_version():
+    try:
+        response = requests.get(f"{BASE_URL}/get-revit-version", headers=headers)
+        if response.status_code == 200:
+            return response.text
+        else:
+            return f"Error: {response.status_code} - {response.text}"
+    except requests.exceptions.RequestException as e:
+        return f"Error connecting to Revit API: {e}"
+
+# Function to call the "Export Wall Data" API
+def export_wall_data():
+    try:
+        params = {"filepath": data}
+        response = requests.get(f"{BASE_URL}/export-wall-data", headers=headers, params=params)
+        if response.status_code == 200:
+            return response.text
+        else:
+            return f"Error: {response.status_code} - {response.text}"
+    except requests.exceptions.RequestException as e:
+        return f"Error connecting to Revit API: {e}"
+
+# Button to get Revit version
+if st.button("Get Revit Version"):
+    version = get_revit_version()
+    st.success(f"Revit Version: {version}")
+
+# Button to get Wall Element Types
+if st.button("Get Wall Parameter Data"):
+    wall_types = export_wall_data()
+    if isinstance(wall_types, list):
+        st.write("### Wall Element Types:")
+        for wt in wall_types:
+            st.write(f"- {wt}")
+    else:
+        st.error(wall_types)
 
 st.header("Filter Columns")
 
@@ -96,56 +141,6 @@ if st.button("Apply Filter"):
     
     st.success("Columns filtered successfully!")
     print("Columns filtered successfully!")
-
-st.header("Revit Information Retrieval")
-
-# Base URL of the Revit HTTP server
-BASE_URL = "http://127.0.0.1:8080"
-
-data = os.path.join(current, "temp", "Wall_data.csv")
-
-headers = {
-    "Content-Type": "application/json",  # Not always required for GET, but some servers check this
-    "Host": "localhost",
-}
-
-# Function to call the "Get Revit Version" API
-def get_revit_version():
-    try:
-        response = requests.get(f"{BASE_URL}/get-revit-version", headers=headers)
-        if response.status_code == 200:
-            return response.text
-        else:
-            return f"Error: {response.status_code} - {response.text}"
-    except requests.exceptions.RequestException as e:
-        return f"Error connecting to Revit API: {e}"
-
-# Function to call the "Export Wall Data" API
-def export_wall_data():
-    try:
-        params = {"filepath": data}
-        response = requests.get(f"{BASE_URL}/export-wall-data", headers=headers, params=params)
-        if response.status_code == 200:
-            return response.text
-        else:
-            return f"Error: {response.status_code} - {response.text}"
-    except requests.exceptions.RequestException as e:
-        return f"Error connecting to Revit API: {e}"
-
-# Button to get Revit version
-if st.button("Get Revit Version"):
-    version = get_revit_version()
-    st.success(f"Revit Version: {version}")
-
-# Button to get Wall Element Types
-if st.button("Get Wall Parameter Data"):
-    wall_types = export_wall_data()
-    if isinstance(wall_types, list):
-        st.write("### Wall Element Types:")
-        for wt in wall_types:
-            st.write(f"- {wt}")
-    else:
-        st.error(wall_types)
 
 st.header("Bscore Prediction")
 if st.button("Predict Bscore"):
