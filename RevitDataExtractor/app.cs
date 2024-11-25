@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Windows;
 using Autodesk.Revit.ApplicationServices;
 using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
@@ -12,24 +13,33 @@ namespace RevitDataExtractor
 {
     [Transaction(TransactionMode.Manual)]
     [Regeneration(RegenerationOption.Manual)]
-
-    class App : IExternalApplication
+    public class App : IExternalApplication
     {
-        public static RevitEventHandler rvtHandler;
         public Result OnStartup(UIControlledApplication a)
         {
-            rvtHandler = new RevitEventHandler();
-            a.CreateRibbonTab("RevitDataExtractor");
-            RibbonPanel ribbon = a.CreateRibbonPanel("RevitDataExtractor", "Open");
+            try
+            {
+                string ribbonPanelName = "AI Plugin";
+                RibbonPanel ribbonPanel = a.CreateRibbonPanel("Add-Ins", ribbonPanelName);
 
-            string thisAssembly = Assembly.GetExecutingAssembly().Location;
-            //Stream imgStream = Assembly.GetExecutingAssembly().GetManifestResourceStream("fire_rvt.images.Logo.png");
-            //Image iconImg = Image.FromStream(imgStream);
-            //showPane.LargeImage = Utilities.ToImageSource(iconImg, ImageFormat.Png);
-            PushButtonData showPane = new PushButtonData("Start App", "Start App", thisAssembly, "RevitDataExtractor.WebCommand");
-            
-            RibbonItem show = ribbon.AddItem(showPane);
-            return Result.Succeeded;
+                string thisAssembly = Assembly.GetExecutingAssembly().Location;
+
+                PushButtonData buttonData = new PushButtonData(
+                    "RevitAIPlugin",
+                    "RevitAIPlugin",
+                    thisAssembly,
+                    "RevitDataExtractor.WebCommand"
+                );
+
+                ribbonPanel.AddItem(buttonData);
+                return Result.Succeeded;
+            }
+            catch (Exception ex)
+            {
+                // Log the error to a file
+                System.IO.File.WriteAllText(@"C:\temp\RevitPluginError.log", ex.ToString());
+                return Result.Failed;
+            }
         }
 
         public Result OnShutdown(UIControlledApplication a)

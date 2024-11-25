@@ -1,77 +1,12 @@
-﻿//using System;
-//using System.Collections.Generic;
-//using System.IO;
-//using System.Linq;
-//using Autodesk.Revit.UI;
-//using Autodesk.Revit.DB;
-//using System.Windows.Forms;
-//using WallDataPlugin;
-//using Autodesk.Revit.Attributes;
-//namespace RevitDataExtractor
-//{
-//    [Transaction(TransactionMode.Manual)]
-//    public class WallDataExporter : IExternalCommand
-//    {
-//        // Main entry point of the plugin
-//        public Result Execute(
-//    ExternalCommandData commandData,
-//    ref string message,
-//    ElementSet elements)
-//        {
-//            try
-//            {
-//                // Show the user form
-//                UserForm form = new UserForm();
-//                form.ShowDialog();
-
-//                return Result.Succeeded;
-//            }
-//            catch (Exception ex)
-//            {
-//                message = ex.Message;
-//                return Result.Failed;
-//            }
-//        }
-
-//        // Function to retrieve the Revit version
-//        private string GetRevitVersion(Autodesk.Revit.ApplicationServices.Application app)
-//        {
-//            return app.VersionNumber;
-//        }
-
-//        // Function to export wall data to CSV
-//        private void ExportWallDataToCsv(Document doc, string filePath)
-//        {
-//            // Collect all wall elements in the document
-//            FilteredElementCollector collector = new FilteredElementCollector(doc);
-//            ICollection<Element> wallTypes = collector.OfClass(typeof(WallType)).ToElements();
-
-//            // Prepare CSV data
-//            List<string> csvLines = new List<string> { "WallType Name,Width (m),Function" };
-
-//            foreach (WallType wallType in wallTypes)
-//            {
-//                string name = wallType.Name;
-//                double width = wallType.Width; // Width is stored in feet
-//                width = UnitUtils.ConvertFromInternalUnits(width, UnitTypeId.Meters);
-//                WallFunction function = (WallFunction)(int)wallType.Kind;
-
-//                csvLines.Add($"{name},{width:F2},{function}");
-//            }
-
-//            // Write CSV to file
-//            File.WriteAllLines(filePath, csvLines);
-//        }
-//    }
-//}
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.WebSockets;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.DB;
@@ -79,15 +14,39 @@ using System.Windows.Forms;
 using WallDataPlugin;
 using Autodesk.Revit.Attributes;
 using Newtonsoft.Json;
+using Microsoft.Web.WebView2.Core;
+using Microsoft.Web.WebView2.Wpf;
+using System.Diagnostics;
+using System.Windows;
+using System.Windows.Input;
 
 namespace RevitDataExtractor
 {
     [Transaction(TransactionMode.Manual)]
     public class WallDataExporter : IExternalCommand
     {
-        private static HttpListener _listener;
+        private static ClientWebSocket _webSocket;
         private static Autodesk.Revit.ApplicationServices.Application _revitApp;
         private static Document _revitDoc;
+
+        public class WebWindow : System.Windows.Window
+        {
+            private UIApplication _uiApp;
+
+            public WebWindow(UIApplication uiApp)
+            {
+                _uiApp = uiApp;
+                this.Title = "Web Window";
+                this.Width = 800;
+                this.Height = 600;
+
+                // Add WebView2 or other UI components here
+                // Example:
+                //var webView = new Microsoft.Web.WebView2.Wpf.WebView2();
+                //this.Content = webView;
+                //webView.Source = new Uri("https://example.com");
+            }
+        }
 
         public Result Execute(
             ExternalCommandData commandData,
@@ -99,8 +58,8 @@ namespace RevitDataExtractor
                 _revitApp = commandData.Application.Application;
                 _revitDoc = commandData.Application.ActiveUIDocument.Document;
 
-                // Start the HTTP server
-                StartHttpServer();
+                // Start the WebSocket connection
+                StartWebSocketConnection();
 
                 // Show the user form
                 UserForm form = new UserForm();
@@ -115,100 +74,38 @@ namespace RevitDataExtractor
             }
         }
 
-        private void StartHttpServer()
+        private async void StartWebSocketConnection()
         {
-            _listener = new HttpListener();
-            _listener.Prefixes.Add("http://localhost:8080/");
-            _listener.Start();
-            _listener.BeginGetContext(new AsyncCallback(OnRequestReceived), null);
-            Task.Run(() => Console.WriteLine("HTTP server started on http://localhost:8080/"));
+            _webSocket = new ClientWebSocket();
+            Uri serverUri = new Uri("wss://revitaiplugin.streamlit.app/ws");
+            await _webSocket.ConnectAsync(serverUri, CancellationToken.None);
+            Task.Run(() => ReceiveMessages());
         }
 
-        private async void OnRequestReceived(IAsyncResult result)
+        private async Task ReceiveMessages()
         {
-            if (_listener == null || !_listener.IsListening)
-                return;
-
-            HttpListenerContext context = _listener.EndGetContext(result);
-            _listener.BeginGetContext(new AsyncCallback(OnRequestReceived), null);
-
-            HttpListenerRequest request = context.Request;
-            HttpListenerResponse response = context.Response;
-
-            if (request.HttpMethod == "GET")
+            var buffer = new byte[1024 * 4];
+            while (_webSocket.State == WebSocketState.Open)
             {
-                if (request.Url.AbsolutePath == "/get-revit-version")
+                var result = await _webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
+                if (result.MessageType == WebSocketMessageType.Text)
                 {
-                    string revitVersion = GetRevitVersion(_revitApp);
-                    response.StatusCode = (int)HttpStatusCode.OK;
-                    using (StreamWriter writer = new StreamWriter(response.OutputStream))
-                    {
-                        writer.Write(revitVersion);
-                    }
+                    string message = Encoding.UTF8.GetString(buffer, 0, result.Count);
+                    // Handle the received message
                 }
-                else if (request.Url.AbsolutePath == "/export-wall-data")
+                else if (result.MessageType == WebSocketMessageType.Close)
                 {
-                    string filePath = request.QueryString["filepath"];
-                    if (!string.IsNullOrEmpty(filePath))
-                    {
-                        ExportWallDataToCsv(_revitDoc, filePath);
-                        response.StatusCode = (int)HttpStatusCode.OK;
-                        using (StreamWriter writer = new StreamWriter(response.OutputStream))
-                        {
-                            writer.Write("Wall data exported successfully.");
-                        }
-                    }
-                    else
-                    {
-                        response.StatusCode = (int)HttpStatusCode.BadRequest;
-                        using (StreamWriter writer = new StreamWriter(response.OutputStream))
-                        {
-                            writer.Write("File path is required.");
-                        }
-                    }
-                }
-                else
-                {
-                    response.StatusCode = (int)HttpStatusCode.NotFound;
+                    await _webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, string.Empty, CancellationToken.None);
                 }
             }
-            else if (request.HttpMethod == "POST")
-            {
-                using (StreamReader reader = new StreamReader(request.InputStream, request.ContentEncoding))
-                {
-                    string requestData = await reader.ReadToEndAsync();
-                    await ForwardDataToApiAsync(requestData);
-                }
-
-                response.StatusCode = (int)HttpStatusCode.OK;
-                using (StreamWriter writer = new StreamWriter(response.OutputStream))
-                {
-                    writer.Write("Data received and forwarded successfully.");
-                }
-            }
-            else
-            {
-                response.StatusCode = (int)HttpStatusCode.MethodNotAllowed;
-            }
-
-            response.Close();
         }
 
-        private async Task ForwardDataToApiAsync(string jsonData)
+        private async Task SendMessageAsync(string message)
         {
-            using (HttpClient client = new HttpClient())
+            if (_webSocket.State == WebSocketState.Open)
             {
-                client.BaseAddress = new Uri("http://localhost:8501/");
-                client.DefaultRequestHeaders.Accept.Clear();
-                client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
-
-                HttpContent content = new StringContent(jsonData, Encoding.UTF8, "application/json");
-                HttpResponseMessage response = await client.PostAsync("api/revitdata", content);
-
-                if (!response.IsSuccessStatusCode)
-                {
-                    throw new Exception("Failed to forward data to API: " + response.ReasonPhrase);
-                }
+                var messageBuffer = Encoding.UTF8.GetBytes(message);
+                await _webSocket.SendAsync(new ArraySegment<byte>(messageBuffer), WebSocketMessageType.Text, true, CancellationToken.None);
             }
         }
 

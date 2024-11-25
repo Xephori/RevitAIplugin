@@ -27,8 +27,8 @@ namespace RevitDataExtractor
         {
             try
             {
-                WebWindow webWindow = new WebWindow(commandData.Application);
-                App.rvtHandler.webWindow = webWindow;
+                WallDataExporter.WebWindow webWindow = new WallDataExporter.WebWindow(commandData.Application);
+                //App.rvtHandler.webWindow = webWindow;
                 webWindow.Show();
                 return Result.Succeeded;
             }

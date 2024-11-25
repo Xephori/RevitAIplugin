@@ -12,6 +12,19 @@ using System.IO;
 
 namespace RevitDataExtractor
 {
+    public static class Utilities
+    {
+        public static string AssemblyDirectory
+        {
+            get
+            {
+                string codeBase = System.Reflection.Assembly.GetExecutingAssembly().CodeBase;
+                UriBuilder uri = new UriBuilder(codeBase);
+                string path = Uri.UnescapeDataString(uri.Path);
+                return Path.GetDirectoryName(path);
+            }
+        }
+    }
     public class LaunchWeb
     {
         private WebView2 web_view;
@@ -22,106 +35,72 @@ namespace RevitDataExtractor
         internal LaunchWeb(UIApplication a, WebView2 web_view)
         {
             this.web_view = web_view;
-            // added to start the server from revit, otherwise, start it manually from terminal
-            // note to remove this if the server is going to be hosted online
-            // StartHttpServer();
 
             this.LoadContent();
         }
 
-        // //definition to start the http server from revit
-        // //to remove this part if the server is going to be hosted online
-        // private void StartHttpServer()
-        // {
-        //     ProcessStartInfo startInfo = new ProcessStartInfo
-        //     {
-        //         FileName = "cmd.exe",
-        //         Arguments = "/c npm start",
-        //         // Arguments = "/c http-server -p 5173",
-        //         WorkingDirectory = @"C:\Users\trust\OneDrive - Singapore University of Technology and Design\Internship\RevitAIplugin\localhost", // Update this path
-        //         CreateNoWindow = true,
-        //         UseShellExecute = false
-        //     };
-
-        //     try
-        //     {
-        //         Process process = Process.Start(startInfo);
-        //         if (process == null)
-        //         {
-        //             throw new InvalidOperationException("Failed to start HTTP server.");
-        //         }
-        //     }
-        //     catch (Exception ex)
-        //     {
-        //         Debug.WriteLine("Failed to start HTTP server.");
-        //         Debug.WriteLine(ex.Message);
-        //     }
-        // }
-
         private async void LoadContent()
         {
-            CoreWebView2Environment env = await CoreWebView2Environment.CreateAsync(userDataFolder: DEFAULT_FOLDER);
-            await web_view.EnsureCoreWebView2Async(env);
-
-            web_view.CoreWebView2.AddWebResourceRequestedFilter(DEFAULT_URL + "*",
-                CoreWebView2WebResourceContext.All
-                );
-            web_view.CoreWebView2.WebResourceRequested += delegate (object sender,
-                CoreWebView2WebResourceRequestedEventArgs args)
+            try
             {
-                string assets_file_path = Utilities.AssemblyDirectory
-               + "/ui/" + args.Request.Uri.Substring((DEFAULT_URL + "*").Length - 1);
+                CoreWebView2Environment env = await CoreWebView2Environment.CreateAsync(userDataFolder: DEFAULT_FOLDER);
+                await web_view.EnsureCoreWebView2Async(env);
 
-                Debug.WriteLine(Utilities.AssemblyDirectory);
-                Debug.WriteLine(assets_file_path);
-                Debug.WriteLine(args.Request.Uri);
+                web_view.CoreWebView2.AddWebResourceRequestedFilter(DEFAULT_URL + "*", CoreWebView2WebResourceContext.All);
+                web_view.CoreWebView2.WebResourceRequested += delegate (object sender, CoreWebView2WebResourceRequestedEventArgs args)
+                {
+                    string assets_file_path = Utilities.AssemblyDirectory + "/ui/" + args.Request.Uri.Substring((DEFAULT_URL + "*").Length - 1);
 
-                try
-                {
-                    FileStream fs = File.OpenRead(assets_file_path);
-                    ManagedStream ms = new ManagedStream(fs);
-                    string headers = "";
-                    if (assets_file_path.EndsWith(".html"))
+                    Debug.WriteLine(Utilities.AssemblyDirectory);
+                    Debug.WriteLine(assets_file_path);
+                    Debug.WriteLine(args.Request.Uri);
+
+                    try
                     {
-                        headers = "Content-Type: text/html";
+                        FileStream fs = File.OpenRead(assets_file_path);
+                        ManagedStream ms = new ManagedStream(fs);
+                        string headers = "";
+                        if (assets_file_path.EndsWith(".html"))
+                        {
+                            headers = "Content-Type: text/html";
+                        }
+                        else if (assets_file_path.EndsWith(".jpg"))
+                        {
+                            headers = "Content-Type: image/jpeg";
+                        }
+                        else if (assets_file_path.EndsWith(".png"))
+                        {
+                            headers = "Content-Type: image/png";
+                        }
+                        else if (assets_file_path.EndsWith(".css"))
+                        {
+                            headers = "Content-Type: text/css";
+                        }
+                        else if (assets_file_path.EndsWith(".js"))
+                        {
+                            headers = "Content-Type: application/javascript";
+                        }
+                        else if (assets_file_path.EndsWith(".json") || assets_file_path.EndsWith(".map"))
+                        {
+                            headers = "Content-Type: application/json";
+                        }
+                        args.Response = web_view.CoreWebView2.Environment.CreateWebResourceResponse(ms, 200, "OK", headers);
                     }
-                    else if (assets_file_path.EndsWith(".jpg"))
+                    catch (Exception ex)
                     {
-                        headers = "Content-Type: image/jpeg";
+                        Debug.WriteLine("Failed to get.");
+                        Debug.WriteLine(ex.Message);
+                        args.Response = web_view.CoreWebView2.Environment.CreateWebResourceResponse(null, 404, "Not found", "");
                     }
-                    else if (assets_file_path.EndsWith(".png"))
-                    {
-                        headers = "Content-Type: image/png";
-                    }
-                    else if (assets_file_path.EndsWith(".css"))
-                    {
-                        headers = "Content-Type: text/css";
-                    }
-                    else if (assets_file_path.EndsWith(".js"))
-                    {
-                        headers = "Content-Type: application/javascript";
-                    }
-                    else if (assets_file_path.EndsWith(".json")
-                            || assets_file_path.EndsWith(".map"))
-                    {
-                        headers = "Content-Type: application/json";
-                    }
-                    args.Response = web_view.CoreWebView2.Environment.CreateWebResourceResponse(
-                                                            ms, 200, "OK", headers);
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine("Failed to get.");
-                    Debug.WriteLine(ex.Message);
-                    args.Response = web_view.CoreWebView2.Environment.CreateWebResourceResponse(
-                                                        null, 404, "Not found", "");
-                }
-            };
-            // FOR embedded web files: .html needed because for some reason can't read from root url.
-            // web_view.CoreWebView2.Navigate(DEFAULT_URL+"index.html");
-            web_view.CoreWebView2.Navigate(DEFAULT_URL);
-            // For development or connection to a remote server, just navigate to the website
-            // web_view.CoreWebView2.Navigate("http://localhost:8501");
+                };
+
+                web_view.CoreWebView2.Navigate(DEFAULT_URL);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("Error during WebView2 initialization.");
+                Debug.WriteLine(ex.Message);
+            }
         }
     }
 
