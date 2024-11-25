@@ -1,8 +1,7 @@
 # helpers.py
 import pandas as pd
 import os
-# from openai import OpenAI
-import openai
+from openai import OpenAI
 from dotenv import load_dotenv
 import csv
 
