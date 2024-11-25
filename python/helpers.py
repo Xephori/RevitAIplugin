@@ -1,20 +1,22 @@
 # helpers.py
+import streamlit as st
 import pandas as pd
 import os
 from openai import OpenAI
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 import csv
 
 # get the virtual environment directory
-venv = os.environ['VIRTUAL_ENV']
-dir = os.path.dirname(venv)
+# venv = os.environ['VIRTUAL_ENV']
+# dir = os.path.dirname(venv)
 
 # Load variables from .env file
-dotenv_path = os.path.join(dir , '.env')
-load_dotenv(dotenv_path)
+# dotenv_path = os.path.join(dir , '.env')
+# load_dotenv(dotenv_path)
 
 # Access your API key
-key = os.environ.get("OPENAI_API_KEY")
+# key = os.environ.get("OPENAI_API_KEY")
+key = os.environ["OPENAI_API_KEY"] == st.secrets["OPENAI_API_KEY"]
 
 path = os.path.join(dir , "files", "B-score mapping for revit.xlsx")
 temp1 = os.path.join(dir , "temp", "intermediates", "noblanks.csv")
