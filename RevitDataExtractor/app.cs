@@ -16,7 +16,7 @@ namespace RevitDataExtractor
 {
     [Transaction(TransactionMode.Manual)]
     [Regeneration(RegenerationOption.Manual)]
-    public class App : IExternalApplication
+    class App : IExternalApplication
     {
         public static RevitHttpServer httpServer { get; private set; }
         public Result OnStartup(UIControlledApplication a)
