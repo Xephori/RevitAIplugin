@@ -100,7 +100,7 @@ namespace RevitDataExtractor
             }
         }
 
-        private async Task SendMessageAsync(string message)
+        public async Task SendMessageAsync(string message)
         {
             if (_webSocket.State == WebSocketState.Open)
             {
@@ -110,13 +110,13 @@ namespace RevitDataExtractor
         }
 
         // Function to retrieve the Revit version
-        private string GetRevitVersion(Autodesk.Revit.ApplicationServices.Application app)
+        public string GetRevitVersion(Autodesk.Revit.ApplicationServices.Application app)
         {
             return app.VersionNumber;
         }
 
         // Function to export wall data to CSV
-        private void ExportWallDataToCsv(Document doc, string filePath)
+        public void ExportWallDataToCsv(Document doc, string filePath)
         {
             // Collect all wall elements in the document
             FilteredElementCollector collector = new FilteredElementCollector(doc);
@@ -140,7 +140,7 @@ namespace RevitDataExtractor
         }
 
         // Function to collect wall data
-        private string CollectWallData(Document doc)
+        public string CollectWallData(Document doc)
         {
             // Collect all wall elements in the document
             FilteredElementCollector collector = new FilteredElementCollector(doc);

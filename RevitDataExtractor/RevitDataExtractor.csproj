@@ -95,6 +95,7 @@
     <Compile Include="LaunchWeb.cs" />
     <Compile Include="App.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RevitHttpServer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.manifest" />

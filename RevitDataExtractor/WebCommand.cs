@@ -7,6 +7,7 @@ using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using System.Threading;
 using Autodesk.Revit.UI.Selection;
+using System.Threading.Tasks;
 #endregion
 
 /// <summary>
@@ -17,7 +18,7 @@ namespace RevitDataExtractor
 {
     [Transaction(TransactionMode.Manual)]
     [Regeneration(RegenerationOption.Manual)]
-    class WebCommand : IExternalCommand
+    public class WebCommand : IExternalCommand
     {
         public Result Execute(
             ExternalCommandData commandData,
@@ -27,9 +28,20 @@ namespace RevitDataExtractor
         {
             try
             {
+                UIApplication uiApp = commandData.Application;
+                App app = uiApp.Application.GetAddInId().GetAddInInstance() as App;
+                if (app != null && app.httpServer != null)
+                {
+                    app.httpServer.SetUIApplication(uiApp);
+                }
+
                 WallDataExporter.WebWindow webWindow = new WallDataExporter.WebWindow(commandData.Application);
                 //App.rvtHandler.webWindow = webWindow;
                 webWindow.Show();
+
+                var wallData = new WallDataExporter().CollectWallData(commandData.Application.ActiveUIDocument.Document);
+                Task.Run(() => new WallDataExporter().SendMessageAsync(wallData));
+
                 return Result.Succeeded;
             }
             catch (Exception ex) {

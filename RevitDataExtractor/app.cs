@@ -1,12 +1,15 @@
 #region Namespaces
 using System;
 using System.Collections.Generic;
+using System.Net;
+using System.Text;
 using System.Reflection;
 using System.Windows;
 using Autodesk.Revit.ApplicationServices;
 using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
+using Newtonsoft.Json;
 #endregion
 
 namespace RevitDataExtractor
@@ -15,6 +18,7 @@ namespace RevitDataExtractor
     [Regeneration(RegenerationOption.Manual)]
     public class App : IExternalApplication
     {
+        public static RevitHttpServer httpServer { get; private set; }
         public Result OnStartup(UIControlledApplication a)
         {
             try
@@ -32,6 +36,10 @@ namespace RevitDataExtractor
                 );
 
                 ribbonPanel.AddItem(buttonData);
+
+                httpServer = new RevitHttpServer();
+                httpServer.Start();
+
                 return Result.Succeeded;
             }
             catch (Exception ex)
@@ -44,6 +52,11 @@ namespace RevitDataExtractor
 
         public Result OnShutdown(UIControlledApplication a)
         {
+            if (httpServer != null)
+            {
+                httpServer.Stop();
+            }
+
             return Result.Succeeded;
         }
     }
