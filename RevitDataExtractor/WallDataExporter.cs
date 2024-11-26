@@ -25,7 +25,7 @@ namespace RevitDataExtractor
     [Transaction(TransactionMode.Manual)]
     public class WallDataExporter : IExternalCommand
     {
-        private static ClientWebSocket _webSocket;
+        private static readonly HttpClient _httpClient = new HttpClient();
         private static Autodesk.Revit.ApplicationServices.Application _revitApp;
         private static Document _revitDoc;
 
@@ -58,9 +58,6 @@ namespace RevitDataExtractor
                 _revitApp = commandData.Application.Application;
                 _revitDoc = commandData.Application.ActiveUIDocument.Document;
 
-                // Start the WebSocket connection
-                StartWebSocketConnection();
-
                 // Show the user form
                 UserForm form = new UserForm();
                 form.ShowDialog();
@@ -74,39 +71,48 @@ namespace RevitDataExtractor
             }
         }
 
-        private async void StartWebSocketConnection()
-        {
-            _webSocket = new ClientWebSocket();
-            Uri serverUri = new Uri("wss://revitaiplugin.streamlit.app/ws");
-            await _webSocket.ConnectAsync(serverUri, CancellationToken.None);
-            Task.Run(() => ReceiveMessages());
-        }
-
-        private async Task ReceiveMessages()
-        {
-            var buffer = new byte[1024 * 4];
-            while (_webSocket.State == WebSocketState.Open)
-            {
-                var result = await _webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
-                if (result.MessageType == WebSocketMessageType.Text)
-                {
-                    string message = Encoding.UTF8.GetString(buffer, 0, result.Count);
-                    // Handle the received message
-                }
-                else if (result.MessageType == WebSocketMessageType.Close)
-                {
-                    await _webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, string.Empty, CancellationToken.None);
-                }
-            }
-        }
-
         public async Task SendMessageAsync(string message)
         {
-            if (_webSocket.State == WebSocketState.Open)
+            try
             {
-                var messageBuffer = Encoding.UTF8.GetBytes(message);
-                await _webSocket.SendAsync(new ArraySegment<byte>(messageBuffer), WebSocketMessageType.Text, true, CancellationToken.None);
+                var content = new StringContent(message, Encoding.UTF8, "application/json");
+                HttpResponseMessage response = await _httpClient.PostAsync(_serverUrl, content);
+                response.EnsureSuccessStatusCode();
+
+                string responseData = await response.Content.ReadAsStringAsync();
+                // Handle the response data as needed
             }
+            catch (HttpRequestException ex)
+            {
+                // Handle HTTP request exceptions
+                Console.WriteLine($"Request error: {ex.Message}");
+            }
+        }
+
+        private async Task ReceiveResponseAsync()
+        {
+            try
+            {
+                HttpResponseMessage response = await _httpClient.GetAsync(_serverUrl);
+                response.EnsureSuccessStatusCode();
+
+                string responseData = await response.Content.ReadAsStringAsync();
+                // Process the received data
+            }
+            catch (HttpRequestException ex)
+            {
+                // Handle HTTP request exceptions
+                Console.WriteLine($"Response error: {ex.Message}");
+            }
+        }
+
+        private void StartHttpCommunication()
+        {
+            // Example of sending a message
+            Task.Run(() => SendMessageAsync("Your message here"));
+
+            // Example of receiving a response
+            Task.Run(() => ReceiveResponseAsync());
         }
 
         // Function to retrieve the Revit version

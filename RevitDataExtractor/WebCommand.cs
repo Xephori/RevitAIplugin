@@ -35,6 +35,10 @@ namespace RevitDataExtractor
                 //    app.httpServer.SetUIApplication(uiApp);
                 //}
 
+                RevitHttpServer httpServer = new RevitHttpServer();
+                httpServer.SetUIApplication(commandData.Application);
+                httpServer.Start();
+
                 UIApplication uiApp = commandData.Application;
                 App app = App.GetAddInInstance(commandData.Application.ActiveAddInId);
                 if (app != null && App.httpServer != null)
