@@ -1,2 +1,5 @@
 *
 !.gitignore
+wall_uh.csv
+intermediates/
+results/
