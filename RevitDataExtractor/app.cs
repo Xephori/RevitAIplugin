@@ -59,5 +59,12 @@ namespace RevitDataExtractor
 
             return Result.Succeeded;
         }
+
+        public static App GetAddInInstance(AddInId addInId)
+        {
+            // Implement logic to return the instance of App associated with the given AddInId
+            // This is a placeholder implementation and should be replaced with actual logic
+            return new App();
+        }
     }
 }

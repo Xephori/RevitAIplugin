@@ -28,11 +28,18 @@ namespace RevitDataExtractor
         {
             try
             {
+                //UIApplication uiApp = commandData.Application;
+                //App app = uiApp.Application.GetAddInId().GetAddInInstance() as App;
+                //if (app != null && app.httpServer != null)
+                //{
+                //    app.httpServer.SetUIApplication(uiApp);
+                //}
+
                 UIApplication uiApp = commandData.Application;
-                App app = uiApp.Application.GetAddInId().GetAddInInstance() as App;
-                if (app != null && app.httpServer != null)
+                App app = App.GetAddInInstance(commandData.Application.ActiveAddInId);
+                if (app != null && App.httpServer != null)
                 {
-                    app.httpServer.SetUIApplication(uiApp);
+                    App.httpServer.SetUIApplication(uiApp);
                 }
 
                 WallDataExporter.WebWindow webWindow = new WallDataExporter.WebWindow(commandData.Application);
