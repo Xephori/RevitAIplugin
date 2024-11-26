@@ -17,7 +17,7 @@ import csv
 # key = os.environ.get("OPENAI_API_KEY")
 
 # Access for API key for streamlit
-key = os.environ["OPENAI_API_KEY"] == st.secrets["OPENAI_API_KEY"]
+key = st.secrets["OPENAI_API_KEY"]
 
 dir = os.path.dirname(os.path.realpath(__file__))
 path = os.path.join(dir , "files", "B-score mapping for revit.xlsx")
