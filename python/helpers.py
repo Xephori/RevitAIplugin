@@ -5,17 +5,15 @@ import os
 from openai import OpenAI
 import csv
 
+# # Access for API key for localhost
 # from dotenv import load_dotenv
 
-# get the virtual environment directory
+# # get the virtual environment directory
 # venv = os.environ['VIRTUAL_ENV']
 # dir = os.path.dirname(venv)
-
-# Load variables from .env file
+# # Load variables from .env file
 # dotenv_path = os.path.join(dir , '.env')
 # load_dotenv(dotenv_path)
-
-# Access your API key
 # key = os.environ.get("OPENAI_API_KEY")
 
 # Access for API key for streamlit
