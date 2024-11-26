@@ -252,7 +252,7 @@ if st.button("Predict Bscore"):
         st.write("Bscore prediction is in progress...")
         process_csv(cols)
         st.write("Bscore prediction is complete!")
-        df = pd.read_csv(os.path.join(current, "temp", "results", "Wall_results.csv"))
+        df = pd.read_csv(os.path.join(temp_dir , "Wall_results.csv"))
         
         # Store the DataFrame in session_state
         st.session_state['bscore_df'] = df
