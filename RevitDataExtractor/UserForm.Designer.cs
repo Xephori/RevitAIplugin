@@ -22,7 +22,7 @@
             this.txtWebLink.Name = "txtWebLink";
             this.txtWebLink.Size = new System.Drawing.Size(260, 29);
             this.txtWebLink.TabIndex = 0;
-            this.txtWebLink.Text = "http://your-deployed-web-link.com";
+            this.txtWebLink.Text = "https://revitaiplugin.streamlit.app/";
             // 
             // chkLaunchLocalhost
             // 
