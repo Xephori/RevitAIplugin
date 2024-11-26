@@ -190,7 +190,7 @@ if st.button("Apply Filter"):
 
     # need to update filepaths
     filepath = os.path.join(current, "temp", "Wall_uh.csv")
-    temp3 = os.path.join(temp_dir, "temp", "intermediates", "filtered.csv")
+    temp3 = os.path.join(temp_dir, "filtered.csv")
 
     # Open the file and read the specific columns
     with open(filepath, mode='r', newline='', encoding='utf-8') as file:
