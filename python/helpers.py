@@ -3,8 +3,9 @@ import streamlit as st
 import pandas as pd
 import os
 from openai import OpenAI
-# from dotenv import load_dotenv
 import csv
+
+# from dotenv import load_dotenv
 
 # get the virtual environment directory
 # venv = os.environ['VIRTUAL_ENV']
@@ -16,6 +17,8 @@ import csv
 
 # Access your API key
 # key = os.environ.get("OPENAI_API_KEY")
+
+# Access for API key for streamlit
 key = os.environ["OPENAI_API_KEY"] == st.secrets["OPENAI_API_KEY"]
 
 dir = os.path.dirname(os.path.realpath(__file__))
