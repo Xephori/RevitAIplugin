@@ -21,12 +21,12 @@ key = st.secrets["OPENAI_API_KEY"]
 
 dir = os.path.dirname(os.path.realpath(__file__))
 path = os.path.join(dir , "files", "B-score mapping for revit.xlsx")
-out_path = os.path.join(dir , "temp", "results", "Wall_results.csv")
 
 temp_dir = st.session_state.get("temp_dir", "/tmp")
 temp1 = os.path.join(temp_dir , "noblanks.csv")
 temp2 = os.path.join(temp_dir , "add.csv")
 temp3 = os.path.join(temp_dir , "filtered.csv")
+out_path = os.path.join(temp_dir , "Wall_results.csv")
 
 colu = []
 
