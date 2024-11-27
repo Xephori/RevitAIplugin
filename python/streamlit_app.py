@@ -34,28 +34,22 @@ data = os.path.join(current, "temp", "Wall_data.csv")
 # Function to call the "Get Revit Version" API
 def get_revit_version():
     try:
-        # headers = {
-        #     "Content-Type": "application/json",  # Not always required for GET, but some servers check this
-        #     "Host": "localhost",
-        # }
-        # response = requests.get(f"{BASE_URL}/get-revit-version", headers=headers)
-        response = requests.get("http://localhost:8080/get-revit-version")
+        response = requests.get(f"{BASE_URL}/get-revit-version")
         if response.status_code == 200:
             return response.json()
         else:
             return f"Error: {response.status_code} - {response.text}"
+    except requests.exceptions.ConnectionError:
+        return "Connection error: Unable to reach the server."
+    except requests.exceptions.Timeout:
+        return "Request timed out. The server might be busy or unresponsive."
     except requests.exceptions.RequestException as e:
-        return f"Error connecting to Revit API: {e}"
+        return f"An error occurred: {e}"
 
 # Function to call the "Export Wall Data" API
 def export_wall_data():
     try:
-        # headers = {
-        #     "Content-Type": "application/json",  # Not always required for GET, but some servers check this
-        #     "Host": "localhost",
-        # }
         params = {"filepath": data}
-        # response = requests.get(f"{BASE_URL}/get-wall-data", headers=headers, params=params)
         response = requests.get(f"{BASE_URL}/get-wall-data", params=params)
         if response.status_code == 200:
             return response.json()
