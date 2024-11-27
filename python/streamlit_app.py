@@ -27,15 +27,14 @@ st.write("""
 """)
 
 # Base URL of the Revit HTTP server
-# BASE_URL = "http://localhost:8080"
-BASE_URL = "http://127.0.0.1:8080"
+BASE_URL = "http://localhost:8080"
 
 data = os.path.join(current, "temp", "Wall_data.csv")
 
 # Function to call the "Get Revit Version" API
 def get_revit_version():
     try:
-        response = requests.get(f"{BASE_URL}/get-revit-version")
+        response = requests.get(f"{BASE_URL}/get-revit-version", verify=False)
         if response.status_code == 200:
             return response.json()
         else:
