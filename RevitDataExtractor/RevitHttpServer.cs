@@ -25,7 +25,7 @@ namespace RevitDataExtractor
                 return;
 
             listener = new HttpListener();
-            listener.Prefixes.Add("http://localhost:8080");
+            listener.Prefixes.Add("http://localhost:8080/");
             try
             {
                 listener.Start();
