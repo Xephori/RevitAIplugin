@@ -120,19 +120,19 @@ namespace RevitDataExtractor
                     }
 
                     string responseString = "CSV data received and processed successfully.";
-                    byte[] buffer = Encoding.UTF8.GetBytes(responseString);
-                    response.ContentLength64 = buffer.Length;
+                    byte[] bufferer = Encoding.UTF8.GetBytes(responseString);
+                    response.ContentLength64 = bufferer.Length;
                     response.StatusCode = (int)HttpStatusCode.OK;
-                    await response.OutputStream.WriteAsync(buffer, 0, buffer.Length);
+                    await response.OutputStream.WriteAsync(bufferer, 0, bufferer.Length);
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine($"Error processing request: {ex.Message}");
                     string errorResponse = $"Error: {ex.Message}";
-                    byte[] buffer = Encoding.UTF8.GetBytes(errorResponse);
-                    response.ContentLength64 = buffer.Length;
+                    byte[] bufferer = Encoding.UTF8.GetBytes(errorResponse);
+                    response.ContentLength64 = bufferer.Length;
                     response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                    await response.OutputStream.WriteAsync(buffer, 0, buffer.Length);
+                    await response.OutputStream.WriteAsync(bufferer, 0, bufferer.Length);
                 }
             
                 string invalidResponse = "Invalid request. Please send a POST request with 'text/csv' content type.";
