@@ -1,6 +1,7 @@
 #region Namespaces
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Text;
 using System.Reflection;
@@ -65,6 +66,26 @@ namespace RevitDataExtractor
             // Implement logic to return the instance of App associated with the given AddInId
             // This is a placeholder implementation and should be replaced with actual logic
             return new App();
+        }
+
+        public static void Raise(Action action)
+        {
+            if (action == null) return;
+
+            try
+            {
+                // Ensure Revit's API threading rules are respected.
+                action.Invoke();
+            }
+            catch (Exception ex)
+            {
+                LogError(ex);
+            }
+        }
+        private static void LogError(Exception ex)
+        {
+            string logPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "RevitPluginError.log");
+            File.AppendAllText(logPath, $"{DateTime.Now}: {ex.Message}\n{ex.StackTrace}\n");
         }
     }
 }
