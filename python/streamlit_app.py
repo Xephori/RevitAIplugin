@@ -39,7 +39,10 @@ def get_revit_version():
         #     "Host": "localhost",
         # }
         # response = requests.get(f"{BASE_URL}/get-revit-version", headers=headers)
+        st.write("Attempting to connect to Revit API...")
         response = requests.get(f"{BASE_URL}/get-revit-version")
+        response.raise_for_status()
+        st.write("Connection successful.")
         if response.status_code == 200:
             return response.json()
         else:
