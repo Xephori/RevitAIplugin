@@ -40,15 +40,21 @@ def get_revit_version():
         # }
         # response = requests.get(f"{BASE_URL}/get-revit-version", headers=headers)
         st.write("Attempting to connect to Revit API...")
-        response = requests.get(f"{BASE_URL}/get-revit-version")
+        response = requests.get(f"{BASE_URL}/get-revit-version", timeout=5)
         response.raise_for_status()
         st.write("Connection successful.")
         if response.status_code == 200:
             return response.json()
         else:
             return f"Error: {response.status_code} - {response.text}"
-    except requests.exceptions.RequestException as e:
-        return f"Error connecting to Revit API: {e}"
+    except requests.exceptions.ConnectionError:
+        st.error("Failed to connect to Revit API. Please ensure the server is running.")
+    except requests.exceptions.Timeout:
+        st.error("Connection to Revit API timed out.")
+    except requests.exceptions.HTTPError as err:
+        st.error(f"HTTP error occurred: {err}")
+    except Exception as e:
+        st.error(f"An unexpected error occurred: {e}")
 
 # Function to call the "Export Wall Data" API
 def export_wall_data():
