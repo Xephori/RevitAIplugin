@@ -76,11 +76,22 @@ namespace RevitDataExtractor
             var request = context.Request;
             var response = context.Response;
 
-            if (request.HttpMethod == "GET" && request.Url.AbsolutePath == "/get_wall_data")
+            if (request.HttpMethod == "GET" && request.Url.AbsolutePath == "/get-wall-data")
             {
                 // Get the wall data from Revit
                 var wallData = GetWallData();
                 string responseString = JsonConvert.SerializeObject(wallData);
+
+                byte[] buffer = Encoding.UTF8.GetBytes(responseString);
+                response.ContentLength64 = buffer.Length;
+                response.ContentType = "application/json";
+                await response.OutputStream.WriteAsync(buffer, 0, buffer.Length);
+            }
+            else if (request.HttpMethod == "GET" && request.Url.AbsolutePath == "/get-revit-version")
+            {
+                // Get the wall data from Revit
+                var revitVersion = GetRevitVersion();
+                string responseString = JsonConvert.SerializeObject(revitVersion);
 
                 byte[] buffer = Encoding.UTF8.GetBytes(responseString);
                 response.ContentLength64 = buffer.Length;
@@ -147,6 +158,18 @@ namespace RevitDataExtractor
             WallDataExporter exporter = new WallDataExporter();
             string wallDataJson = exporter.CollectWallData(_uiApp.ActiveUIDocument.Document);
             return JsonConvert.DeserializeObject(wallDataJson);
+        }
+        private object GetRevitVersion()
+        {
+            if (_uiApp == null)
+            {
+                throw new InvalidOperationException("UIApplication is not set.");
+            }
+
+            // Use the CollectWallData method from WallDataExporter
+            WallDataExporter version = new WallDataExporter();
+            string versionJson = version.GetRevitVersion(_uiApp.ActiveUIDocument.Document);
+            return JsonConvert.DeserializeObject(versionJson);
         }
     }
 }
