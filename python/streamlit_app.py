@@ -40,9 +40,9 @@ def get_revit_version():
         }
         response = requests.get(f"{BASE_URL}/get-revit-version", headers=headers)
         if response.status_code == 200:
-            return response.text
+            return response.json()
         else:
-            return f"Error: {response.status_code} - {response.text}"
+            return f"Error: {response.status_code} - {response.json()}"
     except requests.exceptions.RequestException as e:
         return f"Error connecting to Revit API: {e}"
 
@@ -54,11 +54,11 @@ def export_wall_data():
             "Host": "localhost",
         }
         params = {"filepath": data}
-        response = requests.get(f"{BASE_URL}/export-wall-data", headers=headers, params=params)
+        response = requests.get(f"{BASE_URL}/get-wall-data", headers=headers, params=params)
         if response.status_code == 200:
-            return response.text
+            return response.json()
         else:
-            return f"Error: {response.status_code} - {response.text}"
+            return f"Error: {response.status_code} - {response.json()}"
     except requests.exceptions.RequestException as e:
         return f"Error connecting to Revit API: {e}"
 
