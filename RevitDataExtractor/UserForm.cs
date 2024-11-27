@@ -36,6 +36,12 @@ namespace WallDataPlugin
                         UseShellExecute = true
                     });
                 }
+                RevitHttpServer httpServer = new RevitHttpServer();
+                httpServer.SetUIApplication(uiApp);
+                httpServer.Start();
+                
+                LaunchWeb launchWeb = new LaunchWeb(uiApp, webView2Control);
+                launchWeb.LoadContent();
                 else
                 {
                     MessageBox.Show("Please enter a valid web link.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
