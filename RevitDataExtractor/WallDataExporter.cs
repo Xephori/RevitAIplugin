@@ -21,7 +21,7 @@ namespace RevitDataExtractor
         private static readonly HttpClient _httpClient = new HttpClient();
         private static Autodesk.Revit.ApplicationServices.Application _revitApp;
         private static Document _revitDoc;
-        private static string _serverUrl = "http://localhost:8080"; // Define the server URL
+        private static string _serverUrl = "http://127.0.0.1:8080"; // Define the server URL
 
         public Result Execute(
             ExternalCommandData commandData,
