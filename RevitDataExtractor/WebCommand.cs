@@ -8,6 +8,7 @@ using Autodesk.Revit.UI;
 using System.Threading;
 using Autodesk.Revit.UI.Selection;
 using System.Threading.Tasks;
+using WallDataPlugin;
 #endregion
 
 /// <summary>
@@ -46,7 +47,11 @@ namespace RevitDataExtractor
                     App.httpServer.SetUIApplication(uiApp);
                 }
 
-                WallDataExporter.WebWindow webWindow = new WallDataExporter.WebWindow(commandData.Application);
+                UserForm userForm = new UserForm();
+                userForm.ShowDialog();
+                string url = userForm.WebLink;
+
+                WebWindow webWindow = new WebWindow();
                 //App.rvtHandler.webWindow = webWindow;
                 webWindow.Show();
 
