@@ -34,7 +34,7 @@ data = os.path.join(current, "temp", "Wall_data.csv")
 # Function to call the "Get Revit Version" API
 def get_revit_version():
     try:
-        response = requests.get(f"{BASE_URL}/get-revit-version", verify=False)
+        response = requests.get(f"{BASE_URL}/get-revit-version")
         if response.status_code == 200:
             return response.json()
         else:
