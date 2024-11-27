@@ -4,21 +4,13 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Net.WebSockets;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.DB;
-using System.Windows.Forms;
-using WallDataPlugin;
-using Autodesk.Revit.Attributes;
 using Newtonsoft.Json;
-using Microsoft.Web.WebView2.Core;
-using Microsoft.Web.WebView2.Wpf;
-using System.Diagnostics;
-using System.Windows;
-using System.Windows.Input;
+using Autodesk.Revit.Attributes;
+using WallDataPlugin;
 
 namespace RevitDataExtractor
 {
@@ -28,25 +20,7 @@ namespace RevitDataExtractor
         private static readonly HttpClient _httpClient = new HttpClient();
         private static Autodesk.Revit.ApplicationServices.Application _revitApp;
         private static Document _revitDoc;
-
-        public class WebWindow : System.Windows.Window
-        {
-            private UIApplication _uiApp;
-
-            public WebWindow(UIApplication uiApp)
-            {
-                _uiApp = uiApp;
-                this.Title = "Web Window";
-                this.Width = 800;
-                this.Height = 600;
-
-                // Add WebView2 or other UI components here
-                // Example:
-                //var webView = new Microsoft.Web.WebView2.Wpf.WebView2();
-                //this.Content = webView;
-                //webView.Source = new Uri("https://example.com");
-            }
-        }
+        private static string _serverUrl = "http://localhost:8080"; // Define the server URL
 
         public Result Execute(
             ExternalCommandData commandData,
