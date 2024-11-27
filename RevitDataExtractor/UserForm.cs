@@ -11,6 +11,11 @@ namespace WallDataPlugin
             InitializeComponent();
         }
 
+        public string WebLink
+        {
+            get { return txtWebLink.Text; }
+        }
+
         private void btnLaunchWebUI_Click(object sender, EventArgs e)
         {
             // Check if 'Launch Localhost' checkbox is checked
