@@ -76,6 +76,11 @@ namespace RevitDataExtractor
             var request = context.Request;
             var response = context.Response;
 
+            // Add CORS headers to allow requests from specific origins
+            response.Headers.Add("Access-Control-Allow-Origin", "https://revitaiplugin.streamlit.app/"); 
+            response.Headers.Add("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+            response.Headers.Add("Access-Control-Allow-Headers", "Content-Type, Authorization");
+
             if (request.HttpMethod == "GET" && request.Url.AbsolutePath == "/get-wall-data")
             {
                 // Get the wall data from Revit
