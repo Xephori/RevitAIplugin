@@ -1,7 +1,7 @@
 ﻿using System;
 using Autodesk.Revit.UI;
 using System.Diagnostics;
-using Microsoft.Web.WebView2.Wpf;
+using Microsoft.Web.WebView2.WinForms;
 using Microsoft.Web.WebView2.Core;
 using System.IO;
 
@@ -39,7 +39,7 @@ namespace RevitDataExtractor
             this.LoadContent();
         }
 
-        private async void LoadContent()
+        public async void LoadContent()
         {
             try
             {

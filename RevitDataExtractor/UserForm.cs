@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Autodesk.Revit.UI;
+using Microsoft.Web.WebView2.WinForms;
+using RevitDataExtractor;
+using System;
 using System.Diagnostics;
 using System.Windows.Forms;
 
@@ -6,9 +9,13 @@ namespace WallDataPlugin
 {
     public partial class UserForm : Form
     {
-        public UserForm()
+        private UIApplication uiApp;
+        private WebView2 webView2Control;
+        public UserForm(UIApplication app, WebView2 webView)
         {
             InitializeComponent();
+            uiApp = app;
+            webView2Control = webView;
         }
 
         public string WebLink
@@ -35,13 +42,15 @@ namespace WallDataPlugin
                         FileName = webLink,
                         UseShellExecute = true
                     });
+
+                    RevitHttpServer httpServer = new RevitHttpServer();
+                    httpServer.SetUIApplication(uiApp);
+                    httpServer.Start();
+
+                    LaunchWeb launchWeb = new LaunchWeb(uiApp, webView2Control);
+                    launchWeb.LoadContent();
                 }
-                RevitHttpServer httpServer = new RevitHttpServer();
-                httpServer.SetUIApplication(uiApp);
-                httpServer.Start();
                 
-                LaunchWeb launchWeb = new LaunchWeb(uiApp, webView2Control);
-                launchWeb.LoadContent();
                 else
                 {
                     MessageBox.Show("Please enter a valid web link.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);

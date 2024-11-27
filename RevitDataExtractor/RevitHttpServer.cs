@@ -14,9 +14,9 @@ namespace RevitDataExtractor
         private UIApplication _uiApp;
         private bool isRunning = false;
 
-        public void SetUIApplication(UIApplication uiApp)
+        public void SetUIApplication(UIApplication app)
         {
-            _uiApp = uiApp;
+            _uiApp = app;
         }
 
         public void Start()
@@ -168,7 +168,7 @@ namespace RevitDataExtractor
 
             // Use the CollectWallData method from WallDataExporter
             WallDataExporter version = new WallDataExporter();
-            string versionJson = version.GetRevitVersion(_uiApp.ActiveUIDocument.Document);
+            string versionJson = version.GetRevitVersion(_uiApp.Application);
             return JsonConvert.DeserializeObject(versionJson);
         }
     }

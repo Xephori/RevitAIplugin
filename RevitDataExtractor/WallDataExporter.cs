@@ -11,6 +11,7 @@ using Autodesk.Revit.DB;
 using Newtonsoft.Json;
 using Autodesk.Revit.Attributes;
 using WallDataPlugin;
+using Microsoft.Web.WebView2.WinForms;
 
 namespace RevitDataExtractor
 {
@@ -32,8 +33,10 @@ namespace RevitDataExtractor
                 _revitApp = commandData.Application.Application;
                 _revitDoc = commandData.Application.ActiveUIDocument.Document;
 
+                UIApplication uiApp = commandData.Application;
+                WebView2 webView = new WebView2();
                 // Show the user form
-                UserForm form = new UserForm();
+                UserForm form = new UserForm(uiApp, webView);
                 form.ShowDialog();
 
                 return Result.Succeeded;

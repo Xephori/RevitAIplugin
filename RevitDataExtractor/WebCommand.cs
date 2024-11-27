@@ -29,12 +29,6 @@ namespace RevitDataExtractor
         {
             try
             {
-                //UIApplication uiApp = commandData.Application;
-                //App app = uiApp.Application.GetAddInId().GetAddInInstance() as App;
-                //if (app != null && app.httpServer != null)
-                //{
-                //    app.httpServer.SetUIApplication(uiApp);
-                //}
 
                 RevitHttpServer httpServer = new RevitHttpServer();
                 httpServer.SetUIApplication(commandData.Application);
@@ -47,7 +41,9 @@ namespace RevitDataExtractor
                     App.httpServer.SetUIApplication(uiApp);
                 }
 
-                UserForm userForm = new UserForm();
+                var webView2Control = new Microsoft.Web.WebView2.WinForms.WebView2();
+
+                UserForm userForm = new UserForm(uiApp, webView2Control);
                 userForm.ShowDialog();
                 string url = userForm.WebLink;
 
