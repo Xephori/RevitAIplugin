@@ -55,8 +55,12 @@ def export_wall_data():
             return response.json()
         else:
             return f"Error: {response.status_code} - {response.text}"
+    except requests.exceptions.ConnectionError:
+        return "Connection error: Unable to reach the server."
+    except requests.exceptions.Timeout:
+        return "Request timed out. The server might be busy or unresponsive."
     except requests.exceptions.RequestException as e:
-        return f"Error connecting to Revit API: {e}"
+        return f"An error occurred: {e}"
 
 def send_bscore_data_to_revit(bscore_df):
     try:
@@ -75,8 +79,12 @@ def send_bscore_data_to_revit(bscore_df):
             return "Data successfully sent to Revit."
         else:
             return f"Error {response.status_code}: {response.text}"
+    except requests.exceptions.ConnectionError:
+        return "Connection error: Unable to reach the server."
+    except requests.exceptions.Timeout:
+        return "Request timed out. The server might be busy or unresponsive."
     except requests.exceptions.RequestException as e:
-        return f"Error connecting to Revit API: {e}"
+        return f"An error occurred: {e}"
 
 if 'show_chat' not in st.session_state:
     st.session_state['show_chat'] = False
