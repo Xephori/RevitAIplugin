@@ -1,6 +1,8 @@
 using System;
+using System.IO;
 using System.Net;
 using System.Text;
+using System.Threading.Tasks;
 using Autodesk.Revit.UI;
 using Newtonsoft.Json;
 
@@ -68,53 +70,42 @@ namespace RevitDataExtractor
                 }
             }
         }
-        private void OnRequestReceived(IAsyncResult result)
+
+        private async Task HandleRequestAsync(HttpListenerContext context)
         {
-            HttpListener contextListener = (HttpListener)result.AsyncState;
-            if (contextListener.IsListening)
+            var request = context.Request;
+            var response = context.Response;
+
+            if (request.HttpMethod == "GET" && request.Url.AbsolutePath == "/get_wall_data")
             {
-                HttpListenerContext context = contextListener.EndGetContext(result);
-                HttpListenerRequest request = context.Request;
-                HttpListenerResponse response = context.Response;
+                // Get the wall data from Revit
+                var wallData = GetWallData();
+                string responseString = JsonConvert.SerializeObject(wallData);
 
-                if (request.HttpMethod == "GET" && request.Url.AbsolutePath == "/get_wall_data")
-                {
-                    // Get the wall data from Revit
-                    var wallData = GetWallData();
-                    string responseString = JsonConvert.SerializeObject(wallData);
-
-                    byte[] buffer = Encoding.UTF8.GetBytes(responseString);
-                    response.ContentLength64 = buffer.Length;
-                    response.ContentType = "application/json";
-                    response.OutputStream.Write(buffer, 0, buffer.Length);
-                }
-                else
-                {
-                    response.StatusCode = (int)HttpStatusCode.NotFound;
-                }
-
-                response.OutputStream.Close();
-                contextListener.BeginGetContext(OnRequestReceived, contextListener);
+                byte[] buffer = Encoding.UTF8.GetBytes(responseString);
+                response.ContentLength64 = buffer.Length;
+                response.ContentType = "application/json";
+                await response.OutputStream.WriteAsync(buffer, 0, buffer.Length);
             }
-
-            if (request.HttpMethod == "POST" && request.ContentType == "text/csv")
+            else if (request.HttpMethod == "POST" && request.ContentType == "text/csv")
             {
                 try
                 {
                     using (var reader = new StreamReader(request.InputStream, request.ContentEncoding))
                     {
                         string csvData = await reader.ReadToEndAsync();
-                        var records = ParseCsv(csvData);
+                        //var records = ParseCsv(csvData);
 
                         // Process the records within Revit's context
-                        _uiApp?.Invoke(() =>
+                        //_uiApp?.ActiveUIDocument?.Dispatcher.Invoke(new Action(() =>
                         {
                             // Example: Log the received data
-                            foreach (var record in records)
-                            {
-                                TaskDialog.Show("Received Data", $"Column1: {record.Column1}, Column2: {record.Column2}");
-                            }
-                        });
+                            // foreach (var record in records)
+                            // {
+                            //     TaskDialog.Show("Received Data", $"Column1: {record.Column1}, Column2: {record.Column2}");
+                            // }
+                        //}));
+                        }
                     }
 
                     string responseString = "CSV data received and processed successfully.";
