@@ -98,7 +98,7 @@ namespace RevitDataExtractor
                 response.ContentType = "application/json";
                 await response.OutputStream.WriteAsync(buffer, 0, buffer.Length);
             }
-            else if (request.HttpMethod == "POST" && request.ContentType == "text/csv")
+            else if (request.HttpMethod == "POST" && request.Url.AbsolutePath == "/import-bscore-data")
             {
                 try
                 {
@@ -134,13 +134,19 @@ namespace RevitDataExtractor
                     response.StatusCode = (int)HttpStatusCode.InternalServerError;
                     await response.OutputStream.WriteAsync(buffer, 0, buffer.Length);
                 }
-            }
-            else
-            {
+            
                 string invalidResponse = "Invalid request. Please send a POST request with 'text/csv' content type.";
                 byte[] buffer = Encoding.UTF8.GetBytes(invalidResponse);
                 response.ContentLength64 = buffer.Length;
                 response.StatusCode = (int)HttpStatusCode.BadRequest;
+                await response.OutputStream.WriteAsync(buffer, 0, buffer.Length);
+            }
+            else
+            {
+                string responseString = "Invalid request. Supported endpoints: /get-wall-data, /get-revit-version, /import-bscore-data";
+                byte[] buffer = Encoding.UTF8.GetBytes(responseString);
+                response.ContentLength64 = buffer.Length;
+                response.StatusCode = (int)HttpStatusCode.NotFound;
                 await response.OutputStream.WriteAsync(buffer, 0, buffer.Length);
             }
 
