@@ -76,6 +76,11 @@ namespace RevitDataExtractor
             var request = context.Request;
             var response = context.Response;
 
+            // Add CORS headers to allow requests from specific origins
+            response.Headers.Add("Access-Control-Allow-Origin", "https://revitaiplugin.streamlit.app/"); 
+            response.Headers.Add("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+            response.Headers.Add("Access-Control-Allow-Headers", "Content-Type, Authorization");
+
             if (request.HttpMethod == "GET" && request.Url.AbsolutePath == "/get-wall-data")
             {
                 // Get the wall data from Revit
@@ -120,19 +125,19 @@ namespace RevitDataExtractor
                     }
 
                     string responseString = "CSV data received and processed successfully.";
-                    byte[] buffer = Encoding.UTF8.GetBytes(responseString);
-                    response.ContentLength64 = buffer.Length;
+                    byte[] bufferer = Encoding.UTF8.GetBytes(responseString);
+                    response.ContentLength64 = bufferer.Length;
                     response.StatusCode = (int)HttpStatusCode.OK;
-                    await response.OutputStream.WriteAsync(buffer, 0, buffer.Length);
+                    await response.OutputStream.WriteAsync(bufferer, 0, bufferer.Length);
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine($"Error processing request: {ex.Message}");
                     string errorResponse = $"Error: {ex.Message}";
-                    byte[] buffer = Encoding.UTF8.GetBytes(errorResponse);
-                    response.ContentLength64 = buffer.Length;
+                    byte[] bufferer = Encoding.UTF8.GetBytes(errorResponse);
+                    response.ContentLength64 = bufferer.Length;
                     response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                    await response.OutputStream.WriteAsync(buffer, 0, buffer.Length);
+                    await response.OutputStream.WriteAsync(bufferer, 0, bufferer.Length);
                 }
             
                 string invalidResponse = "Invalid request. Please send a POST request with 'text/csv' content type.";
