@@ -27,7 +27,8 @@ st.write("""
 """)
 
 # Base URL of the Revit HTTP server
-BASE_URL = "http://localhost:8080"
+# BASE_URL = "http://localhost:8080"
+BASE_URL = "https://worthy-decent-ewe.ngrok-free.app"
 
 data = os.path.join(current, "temp", "Wall_data.csv")
 
@@ -169,7 +170,7 @@ if st.button("Get Wall Parameter Data"):
     if isinstance(wall_types, list):
         st.write("### Wall Element Types:")
         for wt in wall_types:
-            st.write(f"- {wt}")
+            st.write(f"- {wt}")  # change this to display in df format?
     else:
         st.error(wall_types)
 
