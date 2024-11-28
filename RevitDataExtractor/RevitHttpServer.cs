@@ -13,13 +13,14 @@ namespace RevitDataExtractor
         private HttpListener listener;
         private UIApplication _uiApp;
         private bool isRunning = false;
+        private NgrokHelper ngrokHelper;
 
         public void SetUIApplication(UIApplication app)
         {
             _uiApp = app;
         }
 
-        public void Start()
+        public async Task Start()
         {
             if (isRunning)
                 return;
@@ -31,6 +32,21 @@ namespace RevitDataExtractor
                 listener.Start();
                 isRunning = true;
                 Console.WriteLine("HTTP Server started. Listening for POST requests...");
+
+                // Start ngrok
+                ngrokHelper = new NgrokHelper();
+                string publicUrl = await ngrokHelper.StartNgrok(8080);
+                if (!string.IsNullOrEmpty(publicUrl))
+                {
+                    Console.WriteLine($"ngrok started. Public URL: {publicUrl}");
+                    // You can now use publicUrl in your Streamlit app
+                }
+                else
+                {
+                    Console.WriteLine("Failed to retrieve ngrok public URL.");
+                }
+
+                // Begin listening for requests
                 Task.Run(() => ListenAsync());
             }
             catch (HttpListenerException ex)
@@ -48,6 +64,8 @@ namespace RevitDataExtractor
                 isRunning = false;
                 Console.WriteLine("HTTP Server stopped.");
             }
+
+            ngrokHelper?.StopNgrok();
         }
 
         private async Task ListenAsync()
