@@ -28,7 +28,7 @@ st.write("""
 
 # Base URL of the Revit HTTP server
 # BASE_URL = "http://localhost:8080"
-BASE_URL = "https://worthy-decent-ewe.ngrok-free.app "
+BASE_URL = "https://worthy-decent-ewe.ngrok-free.app"
 
 data = os.path.join(current, "temp", "Wall_data.csv")
 
