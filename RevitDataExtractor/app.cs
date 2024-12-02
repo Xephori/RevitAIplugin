@@ -44,7 +44,7 @@ namespace RevitDataExtractor
                     "RevitAIPlugin",
                     "Launch AI Plugin",
                     thisAssembly,
-                    "RevitDataExtractor.LaunchCommand"
+                    "RevitDataExtractor.WebCommand"
                 );
 
                 // Set the icon for the button
@@ -122,18 +122,4 @@ namespace RevitDataExtractor
         }
     }
 
-    [Transaction(TransactionMode.Manual)]
-    class LaunchCommand : IExternalCommand
-    {
-        public Result Execute(
-          ExternalCommandData commandData,
-          ref string message,
-          ElementSet elements)
-        {
-            UIApplication uiApp = commandData.Application;
-            UserForm userForm = new UserForm(uiApp, new Microsoft.Web.WebView2.WinForms.WebView2());
-            userForm.ShowDialog();
-            return Result.Succeeded;
-        }
-    }
 }
