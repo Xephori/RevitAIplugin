@@ -4,18 +4,21 @@ using RevitDataExtractor;
 using System;
 using System.Diagnostics;
 using System.Windows.Forms;
+using System.Threading.Tasks;
 
 namespace WallDataPlugin
 {
-    public partial class UserForm : Form
-    {
+    public partial class UserForm : Form 
+    { 
         private UIApplication uiApp;
         private WebView2 webView2Control;
+        private NgrokHelper ngrokHelper;
         public UserForm(UIApplication app, WebView2 webView)
         {
             InitializeComponent();
             uiApp = app;
             webView2Control = webView;
+            ngrokHelper = new NgrokHelper();
         }
 
         public string WebLink
@@ -83,6 +86,21 @@ namespace WallDataPlugin
             catch (Exception ex)
             {
                 MessageBox.Show($"Failed to start localhost server. Error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private async Task<string> StartNgrokProcess()
+        {
+            try
+            {
+                int port = 8080; // Adjust based on your needs
+                string ngrokUrl = await ngrokHelper.StartNgrok(port);
+                return ngrokUrl;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Failed to start ngrok process. Error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return null;
             }
         }
     }

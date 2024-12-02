@@ -11,6 +11,11 @@ using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Newtonsoft.Json;
+using WallDataPlugin;
+using System.Windows.Forms;
+using System.Drawing;
+using System.Windows.Media.Imaging;
+using System.Windows.Media;
 #endregion
 
 namespace RevitDataExtractor
@@ -24,17 +29,30 @@ namespace RevitDataExtractor
         {
             try
             {
-                string ribbonPanelName = "AI Plugin";
-                RibbonPanel ribbonPanel = a.CreateRibbonPanel("Add-Ins", ribbonPanelName);
+                string tabName = "AI Plugin";
+                string ribbonPanelName = "AI Tools";
+
+                // Create a new ribbon tab
+                a.CreateRibbonTab(tabName);
+
+                // Create a new ribbon panel within the tab
+                RibbonPanel ribbonPanel = a.CreateRibbonPanel(tabName, ribbonPanelName);
 
                 string thisAssembly = Assembly.GetExecutingAssembly().Location;
 
                 PushButtonData buttonData = new PushButtonData(
                     "RevitAIPlugin",
-                    "RevitAIPlugin",
+                    "Launch AI Plugin",
                     thisAssembly,
                     "RevitDataExtractor.WebCommand"
                 );
+
+                // Set the icon for the button
+                string iconPath = Path.Combine(Directory.GetCurrentDirectory(), "icon.jpg");
+                if (File.Exists(iconPath))
+                {
+                    buttonData.LargeImage = BitmapToImageSource(new Bitmap(iconPath));
+                }
 
                 ribbonPanel.AddItem(buttonData);
 
@@ -82,10 +100,26 @@ namespace RevitDataExtractor
                 LogError(ex);
             }
         }
+        private ImageSource BitmapToImageSource(Bitmap bitmap)
+        {
+            using (MemoryStream memory = new MemoryStream())
+            {
+                bitmap.Save(memory, System.Drawing.Imaging.ImageFormat.Bmp);
+                memory.Position = 0;
+                BitmapImage bitmapImage = new BitmapImage();
+                bitmapImage.BeginInit();
+                bitmapImage.StreamSource = memory;
+                bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
+                bitmapImage.EndInit();
+                return bitmapImage;
+            }
+        }
+
         private static void LogError(Exception ex)
         {
             string logPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "RevitPluginError.log");
             File.AppendAllText(logPath, $"{DateTime.Now}: {ex.Message}\n{ex.StackTrace}\n");
         }
     }
+
 }
