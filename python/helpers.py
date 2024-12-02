@@ -5,24 +5,29 @@ import os
 from openai import OpenAI
 import csv
 
-# # Access for API key for localhost
-# from dotenv import load_dotenv
+# Access for API key for localhost
+from dotenv import load_dotenv
 
-# # get the virtual environment directory
-# venv = os.environ['VIRTUAL_ENV']
-# dir = os.path.dirname(venv)
-# # Load variables from .env file
-# dotenv_path = os.path.join(dir , '.env')
-# load_dotenv(dotenv_path)
-# key = os.environ.get("OPENAI_API_KEY")
+# get the virtual environment directory
+venv = os.environ['VIRTUAL_ENV']
+dir = os.path.dirname(venv)
+# Load variables from .env file
+dotenv_path = os.path.join(dir , '.env')
+load_dotenv(dotenv_path)
+key = os.environ.get("OPENAI_API_KEY")
 
-# Access for API key for streamlit
-key = st.secrets["OPENAI_API_KEY"]
+# # Access for API key for streamlit
+# key = st.secrets["OPENAI_API_KEY"]
 
 dir = os.path.dirname(os.path.realpath(__file__))
 path = os.path.join(dir , "files", "B-score mapping for revit.xlsx")
 
-temp_dir = st.session_state.get("temp_dir", "/tmp")
+# # for streamlit temp directory
+# temp_dir = st.session_state.get("temp_dir", "/tmp")
+
+# for localhost temp directory
+temp_dir = os.path.join(dir , "temp")
+
 temp1 = os.path.join(temp_dir , "noblanks.csv")
 temp2 = os.path.join(temp_dir , "add.csv")
 temp3 = os.path.join(temp_dir , "filtered.csv")

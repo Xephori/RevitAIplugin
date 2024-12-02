@@ -6,14 +6,25 @@ import xlsxwriter
 import csv
 import re
 import requests
+import json
 
 # directory reach
 current = os.path.dirname(os.path.realpath(__file__))
-temp_dir = st.session_state.get("temp_dir", "/tmp")
+
+# # for streamlit temp directory
+# temp_dir = st.session_state.get("temp_dir", "/tmp")
+
+# for localhost temp directory
+temp_dir = os.path.join(current, "temp")
 
 from helpers import process_csv, init_ai
 
 client = init_ai()
+
+# Set BASE_URL using the function to get the dynamic port
+BASE_URL = "http://localhost:8080"
+if not BASE_URL:
+    st.error("Error: Unable to determine the Revit server base URL. Please ensure the Revit plugin is running.")
 
 # Streamlit App Title
 st.title("AI Bscore Label Prediction App")
@@ -26,16 +37,14 @@ st.write("""
     - **Bscore Prediction**: Process the file schedule data from Revit through AI.
 """)
 
-# Base URL of the Revit HTTP server
-# BASE_URL = "http://localhost:8080"
-BASE_URL = "https://worthy-decent-ewe.ngrok-free.app"
-
 data = os.path.join(current, "temp", "Wall_data.csv")
 
 # Function to call the "Get Revit Version" API
 def get_revit_version():
+    if not BASE_URL:
+        return "Error: Revit server base URL is not set."
     try:
-        response = requests.get(f"{BASE_URL}/get-revit-version")
+        response = requests.get(f"{BASE_URL}/getrevitversion")
         if response.status_code == 200:
             return response.json()
         else:
@@ -49,9 +58,11 @@ def get_revit_version():
 
 # Function to call the "Export Wall Data" API
 def export_wall_data():
+    if not BASE_URL:
+        return "Error: Revit server base URL is not set."
     try:
         params = {"filepath": data}
-        response = requests.get(f"{BASE_URL}/get-wall-data", params=params)
+        response = requests.get(f"{BASE_URL}/getwalldata", params=params)
         if response.status_code == 200:
             return response.json()
         else:
@@ -64,11 +75,13 @@ def export_wall_data():
         return f"An error occurred: {e}"
 
 def send_bscore_data_to_revit(bscore_df):
+    if not BASE_URL:
+        return "Error: Revit server base URL is not set."
     try:
         # Convert DataFrame to CSV
         csv_data = bscore_df.to_csv(index=False)
         # Define the API endpoint (replace with the correct endpoint)
-        endpoint = f"{BASE_URL}/import-bscore-data"
+        endpoint = f"{BASE_URL}/importbscoredata"
         # Define headers
         headers = {
             "Content-Type": "text/csv",  # Adjust if using JSON
