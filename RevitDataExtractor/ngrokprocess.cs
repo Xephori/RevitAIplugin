@@ -20,7 +20,7 @@ namespace RevitDataExtractor
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = "ngrok",
-                    Arguments = $"http --url=worthy-decent-ewe.ngrok-free.app {port} --host-header=\"localhost:{port}\"",
+                    Arguments = $"http {port} --host-header=\"localhost:{port}\"",
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
@@ -52,8 +52,11 @@ namespace RevitDataExtractor
                         {
                             var jsonString = await response.Content.ReadAsStringAsync();
                             var json = JsonConvert.DeserializeObject<NgrokApiResponse>(jsonString);
-                            url = json.Tunnels[0].PublicUrl;
-                            break;
+                            if (json.Tunnels.Count > 0)
+                            {
+                                url = json.Tunnels[0].PublicUrl;
+                                break;
+                            }
                         }
                     }
                 }
@@ -61,7 +64,6 @@ namespace RevitDataExtractor
                 {
                     // Ignore exceptions and retry
                 }
-
                 await Task.Delay(delay);
             }
 
