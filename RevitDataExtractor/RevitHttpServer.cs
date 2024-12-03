@@ -10,6 +10,10 @@ using Autodesk.Revit.UI;
 using Autodesk.Revit.DB;
 using Newtonsoft.Json;
 
+/// <summary>
+/// For http requests and server running.
+/// </summary>
+
 namespace RevitDataExtractor
 {
     public class RevitHttpServer
@@ -163,20 +167,6 @@ namespace RevitDataExtractor
                 response.Close();
             }
         }
-
-        //private object GetWallData()
-        //{
-        //    if (_uiApp == null)
-        //    {
-        //        throw new InvalidOperationException("UIApplication is not set.");
-        //    }
-
-        //    // Use the CollectWallData method from WallDataExporter
-        //    WallDataExporter exporter = new WallDataExporter();
-        //    string wallDataJson = exporter.CollectWallData(_uiApp.ActiveUIDocument.Document);
-        //    return JsonConvert.DeserializeObject(wallDataJson);
-        //}
-
         private object GetRevitVersion()
         {
             if (_uiApp == null)

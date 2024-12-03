@@ -16,6 +16,10 @@ using CsvHelper.Configuration;
 using CsvHelper;
 using System.Globalization;
 
+/// <summary>
+/// For main functions of the plugin.
+/// </summary>
+
 namespace RevitDataExtractor
 {
     [Transaction(TransactionMode.Manual)]

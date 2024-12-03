@@ -6,6 +6,10 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using System.Threading.Tasks;
 
+/// <summary>
+/// For opening user form and button functions.
+/// </summary>
+
 namespace WallDataPlugin
 {
     public partial class UserForm : Form 

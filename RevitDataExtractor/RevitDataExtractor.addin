@@ -1,20 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
 <RevitAddIns>
-	<AddIn Type="Command">
-		<Name>Wall Data Exporter</Name>
-		<Assembly>C:/Users/trust/OneDrive - Singapore University of Technology and Design/Internship/RevitAIplugin/RevitDataExtractor/bin/Debug/RevitDataExtractor.dll</Assembly>
-		<AddInId>12345678-ABCD-1234-ABCD-1234567890AB</AddInId>
-		<FullClassName>RevitDataExtractor.WallDataExporter</FullClassName>
-		<VendorId>YourCompany</VendorId>
-		<VendorDescription>Plugin to Export Wall Data</VendorDescription>
-	</AddIn>
-
 	<AddIn Type="Application">
 		<Name>Revit AI Plugin</Name>
-		<Assembly>C:/Users/trust/OneDrive - Singapore University of Technology and Design/Internship/RevitAIplugin/RevitDataExtractor/bin/Debug/RevitDataExtractor.dll</Assembly>
+		<Assembly>{your dll path here}\Debug\RevitDataExtractor.dll</Assembly>
 		<AddInId>244A5C0A-8E6B-4BDC-BA25-CD82882F71C9</AddInId>
-		<FullClassName>RevitDataExtractor.App</FullClassName>
-		<VendorId>YourVendorId</VendorId>
+		<VendorId>BCA</VendorId>
 		<VendorDescription>AI plugin</VendorDescription>
+		<FullClassName>RevitDataExtractor.App</FullClassName>
 	</AddIn>
 </RevitAddIns>

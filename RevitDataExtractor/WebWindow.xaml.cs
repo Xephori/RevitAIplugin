@@ -6,6 +6,10 @@ using Newtonsoft.Json;
 using System.Diagnostics;
 using WallDataPlugin;
 
+/// <summary>
+/// For webwindow opening.
+/// </summary>
+
 namespace RevitDataExtractor
 {
     public partial class WebWindow : Window

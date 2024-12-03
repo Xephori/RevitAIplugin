@@ -1,6 +1,10 @@
 ﻿using System;
 using System.IO;
 
+/// <summary>
+/// For user form ui design.
+/// </summary>
+
 namespace WallDataPlugin
 {
     partial class UserForm

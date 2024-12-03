@@ -13,8 +13,8 @@ using WallDataPlugin;
 
 /// <summary>
 /// For showing the Web UI window.
-/// Author: Bob Lee
 /// </summary>
+ 
 namespace RevitDataExtractor
 {
     [Transaction(TransactionMode.Manual)]
