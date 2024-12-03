@@ -32,9 +32,11 @@ st.title("AI Bscore Label Prediction App")
 st.header("Functions:")
 st.write("""
     - **AI Chatbot**: Chat with the AI to get help any queries you may have.
+    - **Get Revit Version**: Retrieve the version of Revit being used. (Used to check if the Revit server is running)
     - **Revit Information Retrieval**: Retrieve all wall parameters from the Revit project.
     - **Filter Columns**: Fill in key words of columns that you wish to filter out (it does not have to be the entire full name of the column).
     - **Bscore Prediction**: Process the file schedule data from Revit through AI.
+    - **Save to Json**: Save the wall data as a Json file so that it can be processed by Revit via another plugin.
 """)
 
 data = os.path.join(current, "temp", "Wall_data.csv")
@@ -78,7 +80,7 @@ def export_wall_data():
     except requests.exceptions.RequestException as e:
         return f"An error occurred: {e}"
 
-def send_bscore_data_to_revit(bscore_df):
+def save_to_json(bscore_df):
     try:
         json_path = os.path.join(temp_dir, "wall_data.json")
 
@@ -106,7 +108,7 @@ def send_bscore_data_to_revit(bscore_df):
             st.session_state['show_chat'] = False
         if 'messages' not in st.session_state:
             st.session_state['messages'] = []
-            
+
     except Exception as e:
         st.error(f"An error occurred: {e}")
 
@@ -290,7 +292,7 @@ if st.button("Predict Bscore"):
         st.warning("Please filter columns first. If you do not have any filters in mind just click the 'Apply Filter' button eitherway.")
     
 if st.session_state['bscore_df'] is not None:
-    st.header("Send BScore Predictions to Revit")
-    if st.button("Send BScore Data to Revit"):
-        send_bscore_data_to_revit(st.session_state['bscore_df'])
+    st.header("Save wall data prediction Json file")
+    if st.button("Save to Json"):
+        save_to_json(st.session_state['bscore_df'])
         st.success("Json file created successfully!")
