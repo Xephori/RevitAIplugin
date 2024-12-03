@@ -4,6 +4,7 @@ import pandas as pd
 import os
 from openai import OpenAI
 import csv
+from datetime import datetime
 
 # Access for API key for localhost
 from dotenv import load_dotenv
@@ -46,11 +47,12 @@ def process_csv(cols):
     labels = label()
     # print("labelling done") # for terminal bug testing
 
-    eler = Ai_gen(pipeline, cols, labels)
-    # print("AI generated") # for terminal bug testing
+    if os.path.exists(temp2) == False:
+        Ai_gen(pipeline, cols, labels)
+        # print("AI generated") # for terminal bug testing
 
-    add_cols(eler, temp2)
-    # print("Columns added") # for terminal bug testing
+        # add_cols(eler, temp2)
+        # print("Columns added") # for terminal bug testing
 
     merge_csv(temp2, temp3, out_path)
     # print("CSV merged") # for terminal bug testing
@@ -113,16 +115,21 @@ def Ai_gen(client, selected_cols, label):
 
         # print('one row done') # for terminal bug testing
 
-        # # For terminal bug testing time taken
-        # # Get the current timestamp
-        # current_timestamp = datetime.now()
-
-        # # Print the formatted timestamp
-        # formatted_timestamp = current_timestamp.strftime("%Y-%m-%d %H:%M:%S")
-        # print(formatted_timestamp)
+        # For terminal bug testing time taken
+        # Get the current timestamp
+        current_timestamp = datetime.now()
+        # Print the formatted timestamp
+        formatted_timestamp = current_timestamp.strftime("%Y-%m-%d %H:%M:%S")
+        print(formatted_timestamp)
 
     # print("all rows done") # for terminal bug testing
-    return ele_row
+
+    ele_row.insert(0, ['Predicted answer', 'Reasoning'])
+    with open(temp2, 'w', newline='') as add:
+        writer = csv.writer(add)
+        for i in ele_row:
+            writer.writerow(i)
+    # print("Columns added") # for terminal bug testing
 
 def clean_blank_rows(filepath, temp1):
     with open(filepath, newline='') as in_file:
@@ -133,13 +140,13 @@ def clean_blank_rows(filepath, temp1):
                     writer.writerow(row)
         temp_file.close()
 
-# Function to make a csv file with just the 2 additional columns
-def add_cols(ele_row, temp2):
-    ele_row.insert(0, ['Predicted answer', 'Reasoning'])
-    with open(temp2, 'w', newline='') as add:
-        writer = csv.writer(add)
-        for i in ele_row:
-            writer.writerow(i)
+# # Function to make a csv file with just the 2 additional columns
+# def add_cols(ele_row, temp2):
+#     ele_row.insert(0, ['Predicted answer', 'Reasoning'])
+#     with open(temp2, 'w', newline='') as add:
+#         writer = csv.writer(add)
+#         for i in ele_row:
+#             writer.writerow(i)
     
 # Function to merge the original file and the file with just the 2 additional columns
 # merge only the cols that is filtered out
