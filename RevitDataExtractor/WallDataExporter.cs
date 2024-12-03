@@ -12,6 +12,9 @@ using Newtonsoft.Json;
 using Autodesk.Revit.Attributes;
 using WallDataPlugin;
 using Microsoft.Web.WebView2.WinForms;
+using CsvHelper.Configuration;
+using CsvHelper;
+using System.Globalization;
 
 namespace RevitDataExtractor
 {
@@ -98,53 +101,57 @@ namespace RevitDataExtractor
             return app.VersionNumber;
         }
 
-        // Function to export wall data to CSV
-        public void ExportWallDataToCsv(Document doc, string filePath)
-        {
-            // Collect all wall elements in the document
-            FilteredElementCollector collector = new FilteredElementCollector(doc);
-            ICollection<Element> wallTypes = collector.OfClass(typeof(WallType)).ToElements();
-
-            // Prepare CSV data
-            List<string> csvLines = new List<string> { "WallType Name,Width (m),Function" };
-
-            foreach (WallType wallType in wallTypes)
-            {
-                string name = wallType.Name;
-                double width = wallType.Width; // Width is stored in feet
-                width = UnitUtils.ConvertFromInternalUnits(width, UnitTypeId.Meters);
-                WallFunction function = (WallFunction)(int)wallType.Kind;
-
-                csvLines.Add($"{name},{width:F2},{function}");
-            }
-
-            // Write CSV to file
-            File.WriteAllLines(filePath, csvLines);
-        }
-
         // Function to collect wall data
-        public string CollectWallData(Document doc)
+        public List<WallData> CollectWallData(Document doc)
         {
-            // Collect all wall elements in the document
             FilteredElementCollector collector = new FilteredElementCollector(doc);
-            ICollection<Element> wallTypes = collector.OfClass(typeof(WallType)).ToElements();
+            ICollection<Element> wallElements = collector.OfClass(typeof(Wall)).ToElements();
 
-            // Prepare data
-            var wallDataList = new List<object>();
+            List<WallData> wallDataList = new List<WallData>();
 
-            foreach (WallType wallType in wallTypes)
+            foreach (Wall wall in wallElements)
             {
-                var wallData = new
+                var wallType = doc.GetElement(wall.GetTypeId()) as WallType;
+                if (wallType != null)
                 {
-                    Name = wallType.Name,
-                    Width = UnitUtils.ConvertFromInternalUnits(wallType.Width, UnitTypeId.Meters),
-                    Function = (WallFunction)(int)wallType.Kind
-                };
-                wallDataList.Add(wallData);
+                    var param = wallType.LookupParameter("Type Comments"); // Example parameter, can be replaced with any parameter name
+                    string paramValue = param != null ? param.AsString() : "N/A";
+
+                    WallData wallData = new WallData
+                    {
+                        WallId = wall.Id.IntegerValue,
+                        WallName = wall.Name,
+                        WallType = wallType.Name,
+                        TypeComments = paramValue,
+                        Width = UnitUtils.ConvertFromInternalUnits(wallType.Width, UnitTypeId.Meters)
+                    };
+                    wallDataList.Add(wallData);
+                }
             }
 
-            // Convert to JSON
-            return JsonConvert.SerializeObject(wallDataList);
+            return wallDataList;
         }
+
+        public string ExportWallDataToCsv(Document doc)
+        {
+            List<WallData> wallDataList = CollectWallData(doc);
+
+            string csvPath = Path.Combine("C:\\Users\\trust\\OneDrive - Singapore University of Technology and Design\\Internship\\RevitAIplugin\\python\\temp", "WallDataExport.csv");
+            using (var writer = new StreamWriter(csvPath))
+            using (var csv = new CsvWriter(writer, new CsvConfiguration(CultureInfo.InvariantCulture)))
+            {
+                csv.WriteRecords(wallDataList); // Write all wall data records at once
+            }
+
+            return csvPath;
+        }
+    }
+    public class WallData
+    {
+        public int WallId { get; set; }
+        public string WallName { get; set; }
+        public string WallType { get; set; }
+        public string TypeComments { get; set; }
+        public double Width { get; set; }
     }
 }
