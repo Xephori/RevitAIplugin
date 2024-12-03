@@ -20,7 +20,9 @@ Boilerplate .NET solution for Revit Web Apps. Built using Revit Plugin wizard fo
 - WindowsBase
 
 ## Important
-After unzip/cloning the repository to local folders, search for this file --> RevitDataExtractor.addin Cut and paste the file in your revit addin folder. Usually, this folder will be located here --> "C:\Users"your username here"\AppData\Roaming\Autodesk\Revit\Addins\2024" Note* Your revit version may not be 2024 as shown in the path above. Select the correct revit version you want to install the plug-in instead. Open the "RevitDataExtractor.addin" file using a notepad and edit the following line --> <assembly> [RevitDataExtractor.RevitDataExtractor.addin](https://github.com/Xephori/RevitAIplugin/blob/streamlit/RevitDataExtractor/RevitDataExtractor.addin)
+After unzip/cloning the repository to local folders, search for this file --> RevitDataExtractor.addin Cut and paste the file in your revit addin folder. Usually, this folder will be located here --> "C:\Users"your username here"\AppData\Roaming\Autodesk\Revit\Addins\2024" Note* Your revit version may not be 2024 as shown in the path above. Type in the correct revit version you want to install the plug-in instead. Open the "RevitDataExtractor.addin" file using a notepad and edit the following line --> <assembly> [RevitDataExtractor.RevitDataExtractor.addin](https://github.com/Xephori/RevitAIplugin/blob/streamlit/RevitDataExtractor/RevitDataExtractor.addin)
+
+You also need to change this file path in [RevitDataExtractor.WallDataExporter.cs:143](https://github.com/Xephori/RevitAIplugin/blob/streamlit/RevitDataExtractor/WallDataExporter.cs) with your local repository url.
 
 Instead of loading the web ui from streamlit, you may replace [RevitDataExtractor.LaunchWeb.cs:32](https://github.com/Xephori/RevitAIplugin/blob/streamlit/RevitDataExtractor/LaunchWeb.cs) with a url of your development server, to allow faster development (just refresh to show changes to the ui). 
 
