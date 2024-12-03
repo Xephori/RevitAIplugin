@@ -51,8 +51,9 @@ namespace RevitDataExtractor
                 //App.rvtHandler.webWindow = webWindow;
                 webWindow.Show();
 
-                var wallData = new WallDataExporter().CollectWallData(commandData.Application.ActiveUIDocument.Document);
-                Task.Run(() => new WallDataExporter().SendMessageAsync(wallData));
+                var wallDataList = new WallDataExporter().CollectWallData(commandData.Application.ActiveUIDocument.Document);
+                string wallDataJson = Newtonsoft.Json.JsonConvert.SerializeObject(wallDataList);
+                Task.Run(() => new WallDataExporter().SendMessageAsync(wallDataJson));
 
                 return Result.Succeeded;
             }
