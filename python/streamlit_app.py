@@ -79,30 +79,12 @@ def export_wall_data():
         return f"An error occurred: {e}"
 
 def send_bscore_data_to_revit(bscore_df):
-    if not BASE_URL:
-        return "Error: Revit server base URL is not set."
     try:
-        # Convert DataFrame to CSV
-        csv_data = bscore_df.to_csv(index=False)
-        # Define the API endpoint (replace with the correct endpoint)
-        endpoint = f"{BASE_URL}/importbscoredata"
-        # Define headers
-        headers = {
-            "Content-Type": "text/csv",  # Adjust if using JSON
-            "Host": "localhost",
-        }
-        # Send POST request to Revit API
-        response = requests.post(endpoint, headers=headers, data=csv_data)
-        if response.status_code == 200:
-            return "Data successfully sent to Revit."
-        else:
-            return f"Error {response.status_code}: {response.text}"
-    except requests.exceptions.ConnectionError:
-        return "Connection error: Unable to reach the server."
-    except requests.exceptions.Timeout:
-        return "Request timed out. The server might be busy or unresponsive."
-    except requests.exceptions.RequestException as e:
-        return f"An error occurred: {e}"
+        json_path = os.path.join(temp_dir, "wall_data.json")
+        # Convert DataFrame to Json and save as Json file
+        bscore_df.to_json(json_path, orient='records')
+    except Exception as e:
+        return f"Error: Unable to convert DataFrame to JSON: {e}"
 
 if 'show_chat' not in st.session_state:
     st.session_state['show_chat'] = False
@@ -291,8 +273,5 @@ if st.button("Predict Bscore"):
 if st.session_state['bscore_df'] is not None:
     st.header("Send BScore Predictions to Revit")
     if st.button("Send BScore Data to Revit"):
-        result = send_bscore_data_to_revit(st.session_state['bscore_df'])
-        if "successfully" in result.lower():
-            st.success(result)
-        else:
-            st.error(result)
+        send_bscore_data_to_revit(st.session_state['bscore_df'])
+        st.success("Json file created successfully!")
