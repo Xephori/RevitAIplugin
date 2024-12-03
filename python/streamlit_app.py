@@ -81,15 +81,34 @@ def export_wall_data():
 def send_bscore_data_to_revit(bscore_df):
     try:
         json_path = os.path.join(temp_dir, "wall_data.json")
-        # Convert DataFrame to Json and save as Json file
-        bscore_df.to_json(json_path, orient='records')
-    except Exception as e:
-        return f"Error: Unable to convert DataFrame to JSON: {e}"
 
-if 'show_chat' not in st.session_state:
-    st.session_state['show_chat'] = False
-if 'messages' not in st.session_state:
-    st.session_state['messages'] = []
+        # Initialize an empty list to hold the formatted dictionaries
+        formatted_data = []
+
+        # Iterate over each row in the DataFrame
+        for _, row in bscore_df.iterrows():
+            # Create the desired dictionary format
+            formatted_row = {
+                "BDASTypeParameter": "BDAS Wall System",
+                "BDASTypeParameterValue": row["Predicted answer"],  # Predicted answer from df
+                "TypeParameterName": row["WallName"]  # WallName value
+            }
+            # Append to the list
+            formatted_data.append(formatted_row)
+
+        # Convert the list of formatted dictionaries to JSON
+        json_output = json.dumps(formatted_data, indent=4)
+
+        with open(json_path, 'w') as json_file:
+            json_file.write(json_output)
+
+        if 'show_chat' not in st.session_state:
+            st.session_state['show_chat'] = False
+        if 'messages' not in st.session_state:
+            st.session_state['messages'] = []
+            
+    except Exception as e:
+        st.error(f"An error occurred: {e}")
 
 st.header("AI Chatbot")
 
