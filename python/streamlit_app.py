@@ -64,7 +64,11 @@ def export_wall_data():
         params = {"filepath": data}
         response = requests.get(f"{BASE_URL}/getwalldata", params=params)
         if response.status_code == 200:
-            return response.json()
+            # Read the CSV response
+            csv_file = io.StringIO(response.text)
+            wall_data_df = pd.read_csv(csv_file)
+            return wall_data_df
+        
         else:
             return f"Error: {response.status_code} - {response.text}"
     except requests.exceptions.ConnectionError:
@@ -179,13 +183,12 @@ if st.button("Get Revit Version"):
 
 # Button to get Wall Element Types
 if st.button("Get Wall Parameter Data"):
-    wall_types = export_wall_data()
-    if isinstance(wall_types, list):
+    wall_data = export_wall_data()
+    if isinstance(wall_data, pd.DataFrame):
         st.write("### Wall Element Types:")
-        for wt in wall_types:
-            st.write(f"- {wt}")  # change this to display in df format?
+        st.dataframe(wall_data)  # Display the DataFrame directly
     else:
-        st.error(wall_types)
+        st.error(wall_data)  # Display the error message if not a DataFrame
 
 st.header("Filter Columns")
 
@@ -198,16 +201,13 @@ columns_input = st.text_input(
 # Button to apply column filter
 if st.button("Apply Filter"):
     selected_cols = []
-    headings = []
     specific_columns = []
 
     # print(f"col: {colu}") # for terminal bug testing
     # print(f"data: {data}") # for terminal bug testing
 
-    filter_words = []
-
     # need to update filepaths
-    filepath = os.path.join(current, "temp", "Wall_uh.csv")
+    filepath = os.path.join(current, "temp", "WallDataExport.csv")
     temp3 = os.path.join(temp_dir, "filtered.csv")
 
     # Open the file and read the specific columns
@@ -220,23 +220,16 @@ if st.button("Apply Filter"):
         
         # add input for user to use their own columns
         if columns_input != "":
-            filter_words.extend(col for col in re.split(",|, ", columns_input))  # Use extend instead of append
-            # print(filter_words)
-
+            filter_words = [col.strip() for col in re.split(",|, ", columns_input) if col.strip()]
+            # Filter column names that contain any of the words in the filter
+            for heading in headings:
+                if any(word in heading.lower() for word in filter_words):  # Case-insensitive search
+                    specific_columns.append(heading)
         else:
-            # By default filter
-            # Words to filter for in the column names
-            filter_words.extend(item for item in ("buildability", "bdas", "bscore"))  # Use extend instead of append
+            # If no filter input is provided, use all columns
+            specific_columns = headings
 
         # print(f"filter words: {filter_words}") # for terminal bug testing
-
-        # Filter column names that contain any of the words in the filter
-        for heading in headings:
-            if any(word in heading.lower() for word in filter_words):  # Case-insensitive search
-                specific_columns.append(heading)
-    
-        specific_columns.append("BuiltInParameters.Family and Type")
-        # print(f"columns: {specific_columns}") # for terminal bug testing
 
         # Filter rows based on the selected columns
         for row in reader:
