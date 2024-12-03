@@ -1,10 +1,13 @@
 using System;
+using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using Autodesk.Revit.UI;
+using Autodesk.Revit.DB;
 using Newtonsoft.Json;
 
 namespace RevitDataExtractor
@@ -115,11 +118,17 @@ namespace RevitDataExtractor
 
                 if (request.Url.AbsolutePath == "/getwalldata")
                 {
-                    var wallData = GetWallData();
-                    string responseString = JsonConvert.SerializeObject(wallData);
-                    byte[] buffer = Encoding.UTF8.GetBytes(responseString);
+                    //var wallData = GetWallData();
+                    //string responseString = JsonConvert.SerializeObject(wallData);
+                    //byte[] buffer = Encoding.UTF8.GetBytes(responseString);
+                    //response.ContentLength64 = buffer.Length;
+                    //response.ContentType = "application/json";
+                    //await response.OutputStream.WriteAsync(buffer, 0, buffer.Length);
+
+                    var csvPath = ExportWallDataToCsv();
+                    byte[] buffer = File.ReadAllBytes(csvPath);
                     response.ContentLength64 = buffer.Length;
-                    response.ContentType = "application/json";
+                    response.ContentType = "text/csv";
                     await response.OutputStream.WriteAsync(buffer, 0, buffer.Length);
                 }
                 else if (request.Url.AbsolutePath == "/getrevitversion")
@@ -155,18 +164,18 @@ namespace RevitDataExtractor
             }
         }
 
-        private object GetWallData()
-        {
-            if (_uiApp == null)
-            {
-                throw new InvalidOperationException("UIApplication is not set.");
-            }
+        //private object GetWallData()
+        //{
+        //    if (_uiApp == null)
+        //    {
+        //        throw new InvalidOperationException("UIApplication is not set.");
+        //    }
 
-            // Use the CollectWallData method from WallDataExporter
-            WallDataExporter exporter = new WallDataExporter();
-            string wallDataJson = exporter.CollectWallData(_uiApp.ActiveUIDocument.Document);
-            return JsonConvert.DeserializeObject(wallDataJson);
-        }
+        //    // Use the CollectWallData method from WallDataExporter
+        //    WallDataExporter exporter = new WallDataExporter();
+        //    string wallDataJson = exporter.CollectWallData(_uiApp.ActiveUIDocument.Document);
+        //    return JsonConvert.DeserializeObject(wallDataJson);
+        //}
 
         private object GetRevitVersion()
         {
@@ -175,10 +184,23 @@ namespace RevitDataExtractor
                 throw new InvalidOperationException("UIApplication is not set.");
             }
 
-            // Use the CollectWallData method from WallDataExporter
             WallDataExporter exporter = new WallDataExporter();
             string versionJson = exporter.GetRevitVersion(_uiApp.Application);
             return JsonConvert.DeserializeObject(versionJson);
+        }
+
+        private string ExportWallDataToCsv()
+        {
+            if (_uiApp == null)
+            {
+                throw new InvalidOperationException("UIApplication is not set.");
+            }
+
+            Document doc = _uiApp.ActiveUIDocument.Document; // Get the Document object from _uiApp
+            WallDataExporter exporter = new WallDataExporter();
+            string csvPath = exporter.ExportWallDataToCsv(doc);
+
+            return csvPath;
         }
     }
 }
