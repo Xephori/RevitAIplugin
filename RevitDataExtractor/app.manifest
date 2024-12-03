@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<RevitAddIns>
+	<AddIn Type="Command">
+		<Name>Wall Data Exporter</Name>
+		<Assembly>WallDataPlugin.dll</Assembly>
+		<AddInId>12345678-ABCD-1234-ABCD-1234567890AB</AddInId>
+		<VendorId>YourCompany</VendorId>
+		<VendorDescription>Plugin to Export Wall Data</VendorDescription>
+	</AddIn>
+</RevitAddIns>

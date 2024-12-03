@@ -5,7 +5,7 @@ using System.IO;
 /// For streaming local assets.
 /// </summary>
 
-namespace RevitWebApp
+namespace RevitDataExtractor
 {
     class ManagedStream : Stream
     {
