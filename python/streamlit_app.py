@@ -104,13 +104,13 @@ def save_to_json(bscore_df):
         with open(json_path, 'w') as json_file:
             json_file.write(json_output)
 
-        if 'show_chat' not in st.session_state:
-            st.session_state['show_chat'] = False
-        if 'messages' not in st.session_state:
-            st.session_state['messages'] = []
-
     except Exception as e:
         st.error(f"An error occurred: {e}")
+
+if 'show_chat' not in st.session_state:
+            st.session_state['show_chat'] = False
+if 'messages' not in st.session_state:
+    st.session_state['messages'] = []
 
 st.header("AI Chatbot")
 
